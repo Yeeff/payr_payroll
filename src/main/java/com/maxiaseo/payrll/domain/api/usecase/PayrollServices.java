@@ -27,6 +27,18 @@ public class PayrollServices implements IPayrollServicesPort {
 
         ScheduleEmployeesFile scheduleEmployeesFile= fileServicesClient.getFileWithContent(tempFileName);
 
+        return extractSurchargesAndOvertimesFromScheduleData(scheduleEmployeesFile);
+
+    }
+
+    public List<Employee> processDataByScheduleInfo(ScheduleEmployeesFile scheduleEmployeesFile){
+
+        return extractSurchargesAndOvertimesFromScheduleData(scheduleEmployeesFile);
+
+    }
+
+
+    private  List<Employee> extractSurchargesAndOvertimesFromScheduleData(ScheduleEmployeesFile scheduleEmployeesFile){
         List<List<String>> listOfListData = scheduleEmployeesFile.getContent();
 
         LocalDate fileSavedFortNightDate = scheduleEmployeesFile.getFortNightDate();
@@ -34,13 +46,6 @@ public class PayrollServices implements IPayrollServicesPort {
         return fileDataProcessor.extractEmployeeData(listOfListData,
                 fileSavedFortNightDate.getYear(), fileSavedFortNightDate.getMonthValue(), fileSavedFortNightDate.getDayOfMonth(),
                 ConstantsDomain.TimeFormat.valueOf(scheduleEmployeesFile.getTimeFormat()));
-
-        /*dataInMemory = excelManagerAdapter.updateEmployeeDataInExcel(dataInMemory, employees );
-
-        FileAdministrator.overwriteTempFile(tempFileName, dataInMemory);*/
-
-
-
     }
 
 

@@ -3,12 +3,15 @@ package com.maxiaseo.payrll.adapters.driving.http.controller;
 import com.maxiaseo.payrll.adapters.driving.http.dto.EmployeeResponseDto;
 import com.maxiaseo.payrll.adapters.driving.http.mapper.IEmployeeMapper;
 import com.maxiaseo.payrll.domain.api.IPayrollServicesPort;
+import com.maxiaseo.payrll.domain.model.Employee;
+import com.maxiaseo.payrll.domain.model.ScheduleEmployeesFile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -34,5 +37,11 @@ public class PayrollController {
 
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/process")
+    public List<Employee> processPayroll(@RequestBody ScheduleEmployeesFile data) {
+        return payrollServices.processDataByScheduleInfo(data);
+    }
+
 
 }
