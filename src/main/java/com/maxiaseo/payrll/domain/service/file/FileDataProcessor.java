@@ -1,7 +1,6 @@
 package com.maxiaseo.payrll.domain.service.file;
 
 import com.maxiaseo.payrll.domain.model.*;
-import com.maxiaseo.payrll.domain.service.Maxiaseo;
 import com.maxiaseo.payrll.domain.service.processor.OvertimeCalculator;
 import com.maxiaseo.payrll.domain.service.processor.OvertimeSurchargeCalculator;
 import com.maxiaseo.payrll.domain.service.processor.SurchargeCalculator;
@@ -82,7 +81,9 @@ public class FileDataProcessor {
 
     private void addSurchargeOvertimesToEmployeeBasedOnTimeRange(LocalDateTime startTime, LocalDateTime endTime) {
 
-        if (hoursWorkedPerWeek >= MAX_HOURS_BY_WEEK && startTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
+        //if (hoursWorkedPerWeek >= MAX_HOURS_BY_WEEK && startTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
+        if (startTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
+
             addOvertimeSurchargeToEmployee(startTime, endTime);
         } else {
             for (Surcharge surcharge : SurchargeCalculator.getSurchargeList(startTime, endTime)) {
@@ -148,8 +149,6 @@ public class FileDataProcessor {
 
     private TimeRange getInitTimeAndEndTime( String schedule, LocalDate date, TimeFormat timeFormat){
 
-        Maxiaseo maxi = new Maxiaseo();
-
         String[] times = timeFormat == TimeFormat.MILITARY_WITHOUT_COLON
                 ? schedule.split(" A")
                 : schedule.split(" a");
@@ -162,7 +161,7 @@ public class FileDataProcessor {
 
         TimeRange timeRange = new TimeRange(startTime, endTime);
 
-        return maxi.validateLunchHour(timeRange) ;
+        return timeRange ;
     }
 
     private void addHoursWorkedBasedOnTimeRange(TimeRange currentTimeRange){
