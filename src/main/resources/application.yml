@@ -1,5 +1,8 @@
 server:
-  port: 8080
+  port: 8092
+
+file-services:
+  url: https://maxi-api-file-1034515474137.southamerica-east1.run.app/api/file
 
 spring:
   datasource:

@@ -8,7 +8,7 @@ WORKDIR /app
 COPY build/libs/payrll-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose the application port (default Spring Boot port)
-EXPOSE 8080
+EXPOSE 8092
 
 # Command to run the application
 ENTRYPOINT ["java","-jar","app.jar"]
