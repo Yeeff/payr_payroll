@@ -1,9 +1,11 @@
 package com.maxiaseo.payrll.domain.service.file;
 
 import com.maxiaseo.payrll.domain.model.*;
+import com.maxiaseo.payrll.domain.service.Maxiaseo;
 import com.maxiaseo.payrll.domain.service.processor.OvertimeCalculator;
 import com.maxiaseo.payrll.domain.service.processor.OvertimeSurchargeCalculator;
 import com.maxiaseo.payrll.domain.service.processor.SurchargeCalculator;
+import com.maxiaseo.payrll.domain.spi.IPayrollPersistentPort;
 import com.maxiaseo.payrll.domain.util.TimeRange;
 
 import java.time.*;
@@ -20,15 +22,23 @@ public class FileDataProcessor {
 
 
     private Employee employee;
-
     Map<String, String> errorsMap ;
+    private final Byte A_NUMBER_OF_PAST_WORK_DAYS_THAT_GUARANTEE_EXCEED_THE_MAX_HOURS_PER_WEEK = 50;
+    private final Integer NO_VALUES_FOUND = -1;
 
+    Integer hoursWorkedPerWeek ;
 
-    Long hoursWorkedPerWeek ;
+    Byte quantityOfWeeksStarted = 0;
+    Boolean isQuantityOfPastWorkedDaysAdded;
 
-    public FileDataProcessor() {
-        this.hoursWorkedPerWeek = 0L;
+    IPayrollPersistentPort payrollPersistent;
+
+    public FileDataProcessor(IPayrollPersistentPort payrollPersistent) {
+        this.payrollPersistent = payrollPersistent;
+        this.hoursWorkedPerWeek = 0;
         errorsMap = new HashMap<>();
+        quantityOfWeeksStarted = 0;
+        isQuantityOfPastWorkedDaysAdded = false;
     }
 
 
@@ -52,6 +62,11 @@ public class FileDataProcessor {
 
             for (int j = FIRST_COLUM_WITH_VALID_DATA_INDEX; j < dataRowList.size(); j++) {
 
+                if(currentDate.getDayOfWeek() == DayOfWeek.MONDAY)
+                    quantityOfWeeksStarted++;
+
+                if(quantityOfWeeksStarted == 0 && !isQuantityOfPastWorkedDaysAdded) addPastWorkedDays(initDateOfFortnight, currentDate.getDayOfWeek());
+
                 if (dataRowList.get(j) != null) {
                     String cellValue = dataRowList.get(j);
 
@@ -67,12 +82,14 @@ public class FileDataProcessor {
                 }
 
                 if(currentDate.getDayOfWeek() == DayOfWeek.SUNDAY)
-                    hoursWorkedPerWeek = 0L;
+                    hoursWorkedPerWeek = 0;
 
                 currentDate =currentDate.plusDays(1);
 
             }
             employees = addCurrentEmployeeToList(employees);
+            quantityOfWeeksStarted = 0;
+            isQuantityOfPastWorkedDaysAdded = false;
 
         }
         return employees;
@@ -81,9 +98,7 @@ public class FileDataProcessor {
 
     private void addSurchargeOvertimesToEmployeeBasedOnTimeRange(LocalDateTime startTime, LocalDateTime endTime) {
 
-        //if (hoursWorkedPerWeek >= MAX_HOURS_BY_WEEK && startTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
-        if (startTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
-
+        if (hoursWorkedPerWeek >= MAX_HOURS_BY_WEEK && startTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
             addOvertimeSurchargeToEmployee(startTime, endTime);
         } else {
             for (Surcharge surcharge : SurchargeCalculator.getSurchargeList(startTime, endTime)) {
@@ -149,6 +164,8 @@ public class FileDataProcessor {
 
     private TimeRange getInitTimeAndEndTime( String schedule, LocalDate date, TimeFormat timeFormat){
 
+        Maxiaseo maxi = new Maxiaseo();
+
         String[] times = timeFormat == TimeFormat.MILITARY_WITHOUT_COLON
                 ? schedule.split(" A")
                 : schedule.split(" a");
@@ -161,20 +178,40 @@ public class FileDataProcessor {
 
         TimeRange timeRange = new TimeRange(startTime, endTime);
 
-        return timeRange ;
+        return maxi.validateLunchHour(timeRange);
+    }
+
+    private void addPastWorkedDays(LocalDate initDateFortNight, DayOfWeek dayOfWeek){
+
+        Integer hoursWorkedInTheLastFortnight = payrollPersistent.getLastHoursWorkedInTheLastWeekByFortnight(initDateFortNight);
+
+        if(hoursWorkedInTheLastFortnight != NO_VALUES_FOUND){
+            hoursWorkedPerWeek += hoursWorkedInTheLastFortnight;
+        }else{
+            hoursWorkedPerWeek +=  switch (dayOfWeek){
+                case TUESDAY -> 8; case WEDNESDAY -> 16; case THURSDAY -> 24; case FRIDAY -> 32; case SATURDAY -> 40; case SUNDAY -> MAX_HOURS_BY_WEEK; default -> MAX_HOURS_BY_WEEK;
+            };
+        }
+
+        isQuantityOfPastWorkedDaysAdded = true;
     }
 
     private void addHoursWorkedBasedOnTimeRange(TimeRange currentTimeRange){
-        Long hoursWorkedPerDay = Duration.between(
-                currentTimeRange.getStartTime(), currentTimeRange.getEndTime() ).toHours();
+
+        Integer hoursWorkedPerDay = (int) Duration.between(
+                currentTimeRange.getStartTime(), currentTimeRange.getEndTime()
+        ).toHours();
 
         if (hoursWorkedPerDay > MAX_HOURS_BY_DAY)
             hoursWorkedPerWeek += MAX_HOURS_BY_DAY;
         else
-            hoursWorkedPerWeek += hoursWorkedPerDay ;
+            hoursWorkedPerWeek += hoursWorkedPerDay;
+
+
+
     }
 
-    private void addHoursWorkedBasedOnAbsentReason( Long hourToSum){
+    private void addHoursWorkedBasedOnAbsentReason( Integer hourToSum){
 
             hoursWorkedPerWeek += hourToSum ;
     }

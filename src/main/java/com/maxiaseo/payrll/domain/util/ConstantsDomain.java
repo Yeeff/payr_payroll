@@ -10,8 +10,8 @@ public class ConstantsDomain {
 
     public static final Long STEP_IN_MINUTES = 30L;
 
-    public static final Long MAX_HOURS_BY_DAY = 8L;
-    public static final Long MAX_HOURS_BY_WEEK = 48L;
+    public static final Integer MAX_HOURS_BY_DAY = 8;
+    public static final Integer MAX_HOURS_BY_WEEK = 48;
 
     public static final Integer FIRST_DAY_OF_MONTH = 1;
     public static final Integer LAST_DAY_OF_FIRST_FORTNIGHT = 15;

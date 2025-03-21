@@ -76,7 +76,7 @@ public class SurchargeCalculator {
         surcharge.setSurchargeTypeEnum(type);
 
         if (surcharge.getStart() == null)   {
-            surcharge.setStart(cur.minusMinutes(FIRST_THIRTY_MINUTES_WORKED));
+            surcharge.setStart(cur.minusMinutes(STEP_IN_MINUTES));
         }
 
         surcharge.setEnd(cur);

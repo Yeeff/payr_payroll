@@ -2,7 +2,8 @@ server:
   port: 8092
 
 file-services:
-  url: https://maxi-api-file-1034515474137.southamerica-east1.run.app/api/file
+  #url: https://maxi-api-file-1034515474137.southamerica-east1.run.app/api/file
+  url:  http://localhost:8090/api/file
 
 spring:
   datasource:

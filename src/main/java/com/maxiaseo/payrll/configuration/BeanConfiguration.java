@@ -3,10 +3,12 @@ package com.maxiaseo.payrll.configuration;
 import com.maxiaseo.payrll.adapters.driven.feign.adapter.FileClientServices;
 import com.maxiaseo.payrll.adapters.driven.feign.client.IFileClientServices;
 import com.maxiaseo.payrll.adapters.driven.feign.mapper.IFileMapper;
+import com.maxiaseo.payrll.adapters.driven.jpa.mysql.adapter.PayrollPersistentAdapter;
 import com.maxiaseo.payrll.domain.api.IPayrollServicesPort;
 import com.maxiaseo.payrll.domain.api.usecase.PayrollServices;
 import com.maxiaseo.payrll.domain.service.file.FileDataProcessor;
 import com.maxiaseo.payrll.domain.spi.IFileServicePort;
+import com.maxiaseo.payrll.domain.spi.IPayrollPersistentPort;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +22,7 @@ public class BeanConfiguration {
 
     @Bean
     public FileDataProcessor getFileDataProcessor(){
-        return new FileDataProcessor();
+        return new FileDataProcessor(getPayrollPersistentAdapter());
     }
 
     @Bean
@@ -31,6 +33,11 @@ public class BeanConfiguration {
     @Bean
     public IPayrollServicesPort getPayrollServicePort(){
         return new PayrollServices(getFileDataProcessor(), getFileServicesPort());
+    }
+
+    @Bean
+    public IPayrollPersistentPort getPayrollPersistentAdapter(){
+        return new PayrollPersistentAdapter();
     }
 
 

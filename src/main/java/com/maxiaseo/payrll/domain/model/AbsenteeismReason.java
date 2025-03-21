@@ -8,14 +8,14 @@ public class AbsenteeismReason {
 
     private LocalDateTime start;
     private LocalDateTime end;
-    private Long quantityOfHours;
+    private Integer quantityOfHours;
     private AbsenceReasonsEnum absenceReasonsEnum;
 
     public AbsenteeismReason() {
-        this.quantityOfHours = 0L;
+        this.quantityOfHours = 0;
     }
 
-    public AbsenteeismReason(AbsenceReasonsEnum absenceReasons, Long quantityOfHours) {
+    public AbsenteeismReason(AbsenceReasonsEnum absenceReasons, Integer quantityOfHours) {
         this.absenceReasonsEnum = absenceReasons;
         this.quantityOfHours = quantityOfHours;
     }
@@ -25,7 +25,7 @@ public class AbsenteeismReason {
         return end;
     }
 
-    public Long getQuantityOfHours() {
+    public Integer getQuantityOfHours() {
         return quantityOfHours;
     }
 
@@ -45,7 +45,7 @@ public class AbsenteeismReason {
         this.end = end;
     }
 
-    public void setQuantityOfHours(Long quantityOfHours) {
+    public void setQuantityOfHours(Integer quantityOfHours) {
         this.quantityOfHours = quantityOfHours;
     }
 
