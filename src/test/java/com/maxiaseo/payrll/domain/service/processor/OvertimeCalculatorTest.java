@@ -1,9 +1,10 @@
 package com.maxiaseo.payrll.domain.service.processor;
 
 import com.maxiaseo.payrll.domain.model.Overtime;
+import com.maxiaseo.payrll.domain.util.ConstantsDomain;
 import com.maxiaseo.payrll.domain.util.ConstantsDomain.OvertimeTypeEnum;
-import com.maxiaseo.payrll.domain.service.processor.OvertimeCalculator;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,30 +13,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class OvertimeCalculatorTest {
 
-    @Test
-    void testOneDayOvertime() {
-        LocalDateTime start = LocalDateTime.of(2024, 9, 20, 7, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 9, 20, 16, 0);
+    @ParameterizedTest
+    @CsvSource({
+            "2024-09-20T07:00, 2024-09-20T16:00, 60",
+            "2024-09-20T07:00, 2024-09-20T16:30, 90",
+            "2024-09-20T07:00, 2024-09-20T18:00, 180",
+    })
+    void testDayOvertime(String startStr, String endStr, long expectedMinutes) {
+        LocalDateTime start = LocalDateTime.parse(startStr);
+        LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end);
-
-        Overtime dayOvertime = result.stream()
-                .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.DAY)
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Day overtime not found"));
-
-        assertEquals(1, result.size());
-
-        assertEquals(OvertimeTypeEnum.DAY, dayOvertime.getOvertimeTypeEnum());
-        assertEquals(60L, dayOvertime.getQuantityOfMinutes());
-    }
-
-    @Test
-    void testOneDayOvertimeHalfHour() {
-        LocalDateTime start = LocalDateTime.of(2024, 9, 20, 7, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 9, 20, 16, 30);
-
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end);
+        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
 
         Overtime dayOvertime = result.stream()
                 .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.DAY)
@@ -43,35 +31,20 @@ class OvertimeCalculatorTest {
                 .orElseThrow(() -> new AssertionError("Day overtime not found"));
 
         assertEquals(1, result.size());
-
         assertEquals(OvertimeTypeEnum.DAY, dayOvertime.getOvertimeTypeEnum());
-        assertEquals(90L, dayOvertime.getQuantityOfMinutes());
+        assertEquals(expectedMinutes, dayOvertime.getQuantityOfMinutes());
     }
 
-    @Test
-    void testMOreThanOneDayOvertime() {
-        LocalDateTime start = LocalDateTime.of(2024, 9, 20, 7, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 9, 20, 18, 0);
+    @ParameterizedTest
+    @CsvSource({
+            "2024-09-19T14:00, 2024-09-19T23:00, 60",
+            "2024-09-19T14:00, 2024-09-20T02:00, 240"
+    })
+    void testNightOverTime(String startStr, String endStr, Long expectedValue) {
+            LocalDateTime start = LocalDateTime.parse(startStr);
+        LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end);
-
-        Overtime dayOvertime = result.stream()
-                .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.DAY)
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Day overtime not found"));
-
-        assertEquals(1, result.size());
-
-        assertEquals(OvertimeTypeEnum.DAY, dayOvertime.getOvertimeTypeEnum());
-        assertEquals(180L, dayOvertime.getQuantityOfMinutes());
-    }
-
-    @Test
-    void testOneNightOverTime() {
-        LocalDateTime start = LocalDateTime.of(2024, 9, 19, 14, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 9, 19, 23, 0);
-
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end);
+        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
 
         Overtime dayOvertime = result.stream()
                 .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.NIGHT)
@@ -81,33 +54,19 @@ class OvertimeCalculatorTest {
         assertEquals(1, result.size());
 
         assertEquals(OvertimeTypeEnum.NIGHT, dayOvertime.getOvertimeTypeEnum());
-        assertEquals(60L, dayOvertime.getQuantityOfMinutes());
+        assertEquals(expectedValue, dayOvertime.getQuantityOfMinutes());
     }
 
-    @Test
-    void testMoreThanOneNightOverTime() {
-        LocalDateTime start = LocalDateTime.of(2024, 9, 19, 14, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 9, 20, 2, 0);
+    @ParameterizedTest
+    @CsvSource({
+            "2024-09-22T08:00, 2024-09-22T17:00, 60",
+            "2024-09-22T08:00, 2024-09-22T19:00, 180"
+    })
+    void testHolidayOverTime(String startStr, String endStr, Long expectedValue) {
+        LocalDateTime start = LocalDateTime.parse(startStr);
+        LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end);
-
-        Overtime dayOvertime = result.stream()
-                .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.NIGHT)
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Night overtime not found"));
-
-        assertEquals(1, result.size());
-
-        assertEquals(OvertimeTypeEnum.NIGHT, dayOvertime.getOvertimeTypeEnum());
-        assertEquals(240L, dayOvertime.getQuantityOfMinutes());
-    }
-
-    @Test
-    void testOneHolidayOverTime() {
-        LocalDateTime start = LocalDateTime.of(2024, 9, 22, 8, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 9, 22, 17, 0);
-
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end);
+        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
 
         Overtime dayOvertime = result.stream()
                 .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.HOLIDAY)
@@ -117,33 +76,19 @@ class OvertimeCalculatorTest {
         assertEquals(1, result.size());
 
         assertEquals(OvertimeTypeEnum.HOLIDAY, dayOvertime.getOvertimeTypeEnum());
-        assertEquals(60L, dayOvertime.getQuantityOfMinutes());
+        assertEquals(expectedValue, dayOvertime.getQuantityOfMinutes());
     }
 
-    @Test
-    void testMoreThanOneHolidayOverTime() {
-        LocalDateTime start = LocalDateTime.of(2024, 9, 22, 8, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 9, 22, 19, 0);
+    @ParameterizedTest
+    @CsvSource({
+            "2024-09-21T18:00, 2024-09-22T03:00, 60",
+            "2024-09-21T18:00, 2024-09-22T05:00, 180"
+    })
+    void testHolidayNightOverTime(String startStr, String endStr, Long expectedValue) {
+        LocalDateTime start = LocalDateTime.parse(startStr);
+        LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end);
-
-        Overtime dayOvertime = result.stream()
-                .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.HOLIDAY)
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Holiday overtime not found"));
-
-        assertEquals(1, result.size());
-
-        assertEquals(OvertimeTypeEnum.HOLIDAY, dayOvertime.getOvertimeTypeEnum());
-        assertEquals(180L, dayOvertime.getQuantityOfMinutes());
-    }
-
-    @Test
-    void testOneHolidayNightOverTime() {
-        LocalDateTime start = LocalDateTime.of(2024, 9, 21, 18, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 9, 22, 3, 0);
-
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end);
+        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
 
         Overtime dayOvertime = result.stream()
                 .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.NIGHT_HOLIDAY)
@@ -153,33 +98,19 @@ class OvertimeCalculatorTest {
         assertEquals(1, result.size());
 
         assertEquals(OvertimeTypeEnum.NIGHT_HOLIDAY, dayOvertime.getOvertimeTypeEnum());
-        assertEquals(60L, dayOvertime.getQuantityOfMinutes());
+        assertEquals(expectedValue, dayOvertime.getQuantityOfMinutes());
     }
 
-    @Test
-    void testMoreThanOneHolidayNightOverTime() {
-        LocalDateTime start = LocalDateTime.of(2024, 9, 21, 18, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 9, 22, 5, 0);
+    @ParameterizedTest
+    @CsvSource({
+            "2024-09-21T08:00, 2024-09-22T23:00, 300, 180, 900, 480",
+            "2024-09-21T06:00, 2024-09-22T22:00, 420, 180, 900, 420"
+    })
+    void testMixedOvertime(String startStr, String endStr, Long dayValue, Long nightValue, Long holidayValue, Long nightHolidayValue) {
+        LocalDateTime start = LocalDateTime.parse(startStr);
+        LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end);
-
-        Overtime dayOvertime = result.stream()
-                .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.NIGHT_HOLIDAY)
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Night Holiday overtime not found"));
-
-        assertEquals(1, result.size());
-
-        assertEquals(OvertimeTypeEnum.NIGHT_HOLIDAY, dayOvertime.getOvertimeTypeEnum());
-        assertEquals(180L, dayOvertime.getQuantityOfMinutes());
-    }
-
-    @Test
-    void testMixedOvertime() {
-        LocalDateTime start = LocalDateTime.of(2024, 9, 21, 8, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 9, 22, 23, 0);
-
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end);
+        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
 
         Overtime dayOvertime = result.stream()
                 .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.DAY)
@@ -207,65 +138,16 @@ class OvertimeCalculatorTest {
         Long nightHolidayQuantityHours = nightHolidayOvertime.getQuantityOfMinutes();
 
         assertEquals(OvertimeTypeEnum.DAY, dayOvertime.getOvertimeTypeEnum());
-        assertEquals(300L, dayQuantityHours);
+        assertEquals(dayValue, dayQuantityHours);
 
         assertEquals(OvertimeTypeEnum.NIGHT, nightOvertime.getOvertimeTypeEnum());
-        assertEquals(180L, nightQuantityHours);
+        assertEquals(nightValue, nightQuantityHours);
 
-        // Verify Holiday Surcharge
         assertEquals(OvertimeTypeEnum.HOLIDAY, holidayOvertime.getOvertimeTypeEnum());
-        assertEquals(900L, holidayQuantityHours);  // 10 hours (Monday day)
+        assertEquals(holidayValue, holidayQuantityHours);  // 10 hours (Monday day)
 
-        // Verify Night-Holiday Surcharge
         assertEquals(OvertimeTypeEnum.NIGHT_HOLIDAY, nightHolidayOvertime.getOvertimeTypeEnum());
-        assertEquals(480L, nightHolidayQuantityHours);  // 2 hours (Monday night)
-    }
-
-    @Test
-    void testMixedOvertime2() {
-        LocalDateTime start = LocalDateTime.of(2024, 9, 21, 6, 0);
-        LocalDateTime end = LocalDateTime.of(2024, 9, 22, 22, 0);
-
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end);
-
-        Overtime dayOvertime = result.stream()
-                .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.DAY)
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Night surcharge not found"));
-
-        Overtime nightOvertime = result.stream()
-                .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.NIGHT)
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Night surcharge not found"));
-
-        Overtime holidayOvertime = result.stream()
-                .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.HOLIDAY)
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Holiday surcharge not found"));
-
-        Overtime nightHolidayOvertime = result.stream()
-                .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.NIGHT_HOLIDAY)
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Night-Holiday surcharge not found"));
-
-        Long dayQuantityHours = dayOvertime.getQuantityOfMinutes();
-        Long nightQuantityHours = nightOvertime.getQuantityOfMinutes();
-        Long holidayQuantityHours = holidayOvertime.getQuantityOfMinutes();
-        Long nightHolidayQuantityHours = nightHolidayOvertime.getQuantityOfMinutes();
-
-        assertEquals(OvertimeTypeEnum.DAY, dayOvertime.getOvertimeTypeEnum());
-        assertEquals(420L, dayQuantityHours);
-
-        assertEquals(OvertimeTypeEnum.NIGHT, nightOvertime.getOvertimeTypeEnum());
-        assertEquals(180L, nightQuantityHours);
-
-        // Verify Holiday Surcharge
-        assertEquals(OvertimeTypeEnum.HOLIDAY, holidayOvertime.getOvertimeTypeEnum());
-        assertEquals(900L, holidayQuantityHours);  // 10 hours (Monday day)
-
-        // Verify Night-Holiday Surcharge
-        assertEquals(OvertimeTypeEnum.NIGHT_HOLIDAY, nightHolidayOvertime.getOvertimeTypeEnum());
-        assertEquals(420L, nightHolidayQuantityHours);  // 2 hours (Monday night)
+        assertEquals(nightHolidayValue, nightHolidayQuantityHours);  // 2 hours (Monday night)
     }
 
 }

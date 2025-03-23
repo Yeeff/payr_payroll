@@ -24,7 +24,7 @@ class FileDataProcessorTest {
     @InjectMocks
     private  FileDataProcessor fileDataProcessor;
 
-    final Integer NO_VALUES_FOUND = -1;
+    static final Integer NO_VALUES_FOUND = -1;
 
     @Test
     void testExtractEmployeeDataWithAbsent() {
@@ -35,21 +35,21 @@ class FileDataProcessorTest {
                 Arrays.asList(
                         "15326844",
                         "NORALDO ISIDRO CARDENAS CARDENAS",
-                        "DESC",//Sunday
-                        "8pm a 6:30am",  //0.5
+                        "DESC",//1 Sunday
+                        "8pm a 6:30am",
                         "7am a 4pm",
                         "6pm a 6am",
                         "7am a 4pm",
-                        "7am a 4:30pm",      //1.5
+                        "7am a 4:30pm",
                         "6pm a 5am",
-                        "DESC",//Sunday
+                        "DESC",// 8 Sunday
                         "7am a 4pm",
                         "7am a 4pm",
                         "7am a 4pm",
                         "AUS",
-                        "7am a 6pm",      //3
+                        "7am a 6pm",
                         "8pm a 4am",
-                        "7am a 7pm"//Sunday
+                        "7am a 7pm"// 15 Sunday
                 )
         );
         int year = 2024;
@@ -68,13 +68,13 @@ class FileDataProcessorTest {
         assertEquals("NORALDO ISIDRO CARDENAS CARDENAS", employee.getName());
 
         assertEquals(18.0, employee.getTotalSurchargeHoursNight());
-        assertEquals(5.0, employee.getTotalSurchargeHoursNightHoliday() );
+        assertEquals(3.0, employee.getTotalSurchargeHoursNightHoliday() );
         assertEquals(8.0, employee.getTotalSurchargeHoursHoliday());
 
         assertEquals(2.5, employee.getTotalOvertimeHoursDay());
         assertEquals(5.5, employee.getTotalOvertimeHoursNight());
         assertEquals(4.0, employee.getTotalOvertimeHoursHoliday());
-        assertEquals(2.0, employee.getTotalOvertimeHoursNightHoliday());
+        assertEquals(4.0, employee.getTotalOvertimeHoursNightHoliday());
 
         assertEquals(0.0, employee.getTotalOvertimeSurchargeHoursHoliday() );
         assertEquals(0.0, employee.getTotalOvertimeSurchargeHoursNightHoliday() );
@@ -89,21 +89,21 @@ class FileDataProcessorTest {
                 Arrays.asList(
                         "15326844",
                         "ISIDRO CARDENAS",
-                        "6am a 6pm",//sunday
+                        "6am a 6pm",// 1 sunday
                         "6am a 6pm"	,
-                        "6am a 6pm",
+                        "6am a 6pm" ,
                         "6pm a 6am"	,
                         "AUS",
                         "6pm a 6am"	,
-                        "6pm a 6am",
-                        "6pm a 6am",//sunday
+                        "6pm a 6am" ,
+                        "6pm a 6am",// 8 sunday
                         "6pm a 6am"	,
                         "AUS",
                         "AUS",
                         "AUS",
                         "6am a 6pm"	,
                         "6am a 6pm"	,
-                        "6am a 6pm" //sunday
+                        "6am a 6pm" // 15 sunday
                 )
         );
         int year = 2024;
@@ -147,14 +147,14 @@ class FileDataProcessorTest {
                         "7am a 4pm"	,
                         "7am a 4pm"	,
                         "7am a 4pm"	,
-                        "7am a 4pm"	,
+                        "7am a 2pm"	,
                         "7am a 4pm", //sunday
                         "7am a 4pm"	,
                         "7am a 4pm"	,
-                        "AUS"	,
                         "7am a 4pm"	,
                         "7am a 4pm"	,
                         "7am a 4pm"	,
+                        "7am a 2pm"	,
                         "7am a 4pm",//sunday
                         "7am a 4pm"	,
                         "7am a 4pm"	,
@@ -180,17 +180,16 @@ class FileDataProcessorTest {
 
         assertEquals(0.0, employee.getTotalSurchargeHoursNight());
         assertEquals(0.0, employee.getTotalSurchargeHoursNightHoliday() );
-        assertEquals(8.0, employee.getTotalSurchargeHoursHoliday());
+        assertEquals(0.0, employee.getTotalSurchargeHoursHoliday());
 
         assertEquals(0.0, employee.getTotalOvertimeHoursDay());
         assertEquals(0.0, employee.getTotalOvertimeHoursNight());
         assertEquals(0.0, employee.getTotalOvertimeHoursHoliday());
         assertEquals(0.0, employee.getTotalOvertimeHoursNightHoliday());
 
-        assertEquals(8, employee.getTotalOvertimeSurchargeHoursHoliday());
+        assertEquals(16, employee.getTotalOvertimeSurchargeHoursHoliday());
         assertEquals(0, employee.getTotalOvertimeSurchargeHoursNightHoliday());
     }
-
 
     @Test
     void testExtractEmployeeDataWithAbsentCombination3() {
@@ -277,7 +276,6 @@ class FileDataProcessorTest {
         assertEquals(true, result.isEmpty() );
     }
 
-
     @Test
     void testExtractEmployeeDataWithCompensatoryDays() {
         List<List<String>> listOfListData = Arrays.asList(
@@ -298,7 +296,7 @@ class FileDataProcessorTest {
                         "6am a 3pm",
                         "DESC",//
                         "6am a 3pm",
-                        "6am a 3pm",//
+                        "6am a 1pm",//
                         "2am a 3pm" // Sunday
                 )
         );

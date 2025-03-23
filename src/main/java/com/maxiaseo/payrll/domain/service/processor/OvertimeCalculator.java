@@ -17,7 +17,7 @@ public class OvertimeCalculator {
     }
 
 
-    public static List<Overtime> getOvertimeList(LocalDateTime start, LocalDateTime end) {
+    public static List<Overtime> getOvertimeList(LocalDateTime start, LocalDateTime end, Integer maximumLegalHours) {
 
         List<Overtime> overtimeList = new ArrayList<>();
 
@@ -26,7 +26,7 @@ public class OvertimeCalculator {
         Overtime overtimeHoliday =  new Overtime();
         Overtime overtimeHolidayNight =  new Overtime();
 
-        LocalDateTime currentTime = start.plusMinutes(STEP_IN_MINUTES + 480 );
+        LocalDateTime currentTime = start.plusMinutes(STEP_IN_MINUTES + (maximumLegalHours * 60) );
 
         while (currentTime.isBefore(end) || currentTime.isEqual(end)) {
 
