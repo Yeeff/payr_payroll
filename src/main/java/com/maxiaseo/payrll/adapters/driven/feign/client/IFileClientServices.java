@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "file-service", url = "${file-services.url}/api/file")
+@FeignClient(name = "file-service", url = "https://maxi-api-file-1034515474137.southamerica-east1.run.app/api/file")
 @Component
 public interface IFileClientServices {
 
