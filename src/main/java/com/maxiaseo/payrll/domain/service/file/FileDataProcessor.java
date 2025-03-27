@@ -237,6 +237,7 @@ public class FileDataProcessor {
     private void resetNumOfWeeksStarted() {
         quantityOfWeeksStarted = 0;
         isQuantityOfPastWorkedDaysAdded = false;
+        hoursWorkedPerWeek = 0;
     }
 
     private void checkMondaysToIncreaseNumOfWeeksStarted(LocalDate currentDate) {
