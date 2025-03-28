@@ -1,7 +1,6 @@
 package com.maxiaseo.payrll.domain.util;
 
 import java.time.LocalTime;
-import java.util.Set;
 
 public class ConstantsDomain {
 
@@ -10,12 +9,8 @@ public class ConstantsDomain {
 
     public static final Long STEP_IN_MINUTES = 30L;
 
-    public static final Long MAX_HOURS_BY_DAY = 8L;
-    public static final Long MAX_HOURS_BY_WEEK = 48L;
-
-    public static final Integer FIRST_DAY_OF_MONTH = 1;
-    public static final Integer LAST_DAY_OF_FIRST_FORTNIGHT = 15;
-    public static final Long FIRST_THIRTY_MINUTES_WORKED = 30L;
+    public static final Integer MAXIMUM_HOURS_PER_DAY = 8;
+    public static final Integer MAXIMUM_HOURS_PER_WEEK = 46;
 
     public static final String SIIGO_FORMAT_NAME = "Subir novedades desde Excel.xlsx";
 

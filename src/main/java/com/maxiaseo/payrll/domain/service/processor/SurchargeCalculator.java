@@ -16,7 +16,7 @@ public class SurchargeCalculator {
     private SurchargeCalculator(){}
 
 
-    public static List<Surcharge> getSurchargeList(LocalDateTime start, LocalDateTime end) {
+    public static List<Surcharge> getSurchargeList(LocalDateTime start, LocalDateTime end, Integer maximumLegalHours) {
 
         List<Surcharge> surchargesList = new ArrayList<>();
 
@@ -38,7 +38,7 @@ public class SurchargeCalculator {
                 surchargeHolidayNight = increaseValueOfStepToSurcharge(surchargeHolidayNight, current, SurchargeTypeEnum.NIGHT_HOLIDAY);
             }
 
-            LocalDateTime maxTimeToCheckSurcharges = start.plusHours(MAX_HOURS_BY_DAY );
+            LocalDateTime maxTimeToCheckSurcharges = start.plusHours(maximumLegalHours );
             if(maxTimeToCheckSurcharges.isEqual(current)) break;
 
             current = current.plusMinutes(STEP_IN_MINUTES);
@@ -76,7 +76,7 @@ public class SurchargeCalculator {
         surcharge.setSurchargeTypeEnum(type);
 
         if (surcharge.getStart() == null)   {
-            surcharge.setStart(cur.minusMinutes(FIRST_THIRTY_MINUTES_WORKED));
+            surcharge.setStart(cur.minusMinutes(STEP_IN_MINUTES));
         }
 
         surcharge.setEnd(cur);

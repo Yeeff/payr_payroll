@@ -5,6 +5,7 @@ import com.maxiaseo.payrll.domain.service.Maxiaseo;
 import com.maxiaseo.payrll.domain.service.processor.OvertimeCalculator;
 import com.maxiaseo.payrll.domain.service.processor.OvertimeSurchargeCalculator;
 import com.maxiaseo.payrll.domain.service.processor.SurchargeCalculator;
+import com.maxiaseo.payrll.domain.spi.IPayrollPersistentPort;
 import com.maxiaseo.payrll.domain.util.TimeRange;
 
 import java.time.*;
@@ -21,15 +22,22 @@ public class FileDataProcessor {
 
 
     private Employee employee;
-
     Map<String, String> errorsMap ;
+    private static final Integer NO_VALUES_FOUND = -1;
 
+    Integer hoursWorkedPerWeek ;
 
-    Long hoursWorkedPerWeek ;
+    Byte quantityOfWeeksStarted = 0;
+    Boolean isQuantityOfPastWorkedDaysAdded;
 
-    public FileDataProcessor() {
-        this.hoursWorkedPerWeek = 0L;
+    IPayrollPersistentPort payrollPersistent;
+
+    public FileDataProcessor(IPayrollPersistentPort payrollPersistent) {
+        this.payrollPersistent = payrollPersistent;
+        this.hoursWorkedPerWeek = 0;
         errorsMap = new HashMap<>();
+        quantityOfWeeksStarted = 0;
+        isQuantityOfPastWorkedDaysAdded = false;
     }
 
 
@@ -53,6 +61,10 @@ public class FileDataProcessor {
 
             for (int j = FIRST_COLUM_WITH_VALID_DATA_INDEX; j < dataRowList.size(); j++) {
 
+                checkMondaysToIncreaseNumOfWeeksStarted(currentDate);
+
+                checkFirstWeekToAddWorkedHorusInTheLastFortnight(initDateOfFortnight, currentDate);
+
                 if (dataRowList.get(j) != null) {
                     String cellValue = dataRowList.get(j);
 
@@ -62,42 +74,63 @@ public class FileDataProcessor {
 
                         addHoursWorkedBasedOnTimeRange(currentTimeRange);
                     } else if(isValidAbsenceReason(cellValue) && !cellValue.equals(AbsenceReasonsEnum.AUS.toString())  ) {
-                        addHoursWorkedBasedOnAbsentReason(MAX_HOURS_BY_DAY);
+                        addHoursWorkedBasedOnAbsentReason(MAXIMUM_HOURS_PER_DAY);
                         addAbsenteeismReasonToEmployee(cellValue);
                     }
                 }
 
                 if(currentDate.getDayOfWeek() == DayOfWeek.SUNDAY)
-                    hoursWorkedPerWeek = 0L;
+                    hoursWorkedPerWeek = 0;
 
                 currentDate =currentDate.plusDays(1);
 
             }
             employees = addCurrentEmployeeToList(employees);
 
+            resetNumOfWeeksStarted();
+
         }
         return employees;
     }
 
-
     private void addSurchargeOvertimesToEmployeeBasedOnTimeRange(LocalDateTime startTime, LocalDateTime endTime) {
 
-        if (hoursWorkedPerWeek >= MAX_HOURS_BY_WEEK && startTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
+        if (hoursWorkedPerWeek >= MAXIMUM_HOURS_PER_WEEK && startTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
+
             addOvertimeSurchargeToEmployee(startTime, endTime);
+
         } else {
-            for (Surcharge surcharge : SurchargeCalculator.getSurchargeList(startTime, endTime)) {
+
+            Integer legalLimitOfHours = defineNumOfLegalLimitOfHours(startTime);
+
+            for (Surcharge surcharge : SurchargeCalculator.getSurchargeList(startTime, endTime, legalLimitOfHours)) {
                 if (surcharge.getQuantityOfMinutes() != 0) {
                     employee.addNewSurcharge(surcharge);
                 }
             }
 
-            for (Overtime overtime : OvertimeCalculator.getOvertimeList(startTime, endTime)) {
+            for (Overtime overtime : OvertimeCalculator.getOvertimeList(startTime, endTime, legalLimitOfHours)) {
                 if (overtime.getQuantityOfMinutes() != 0) {
                     employee.addNewOverTime(overtime);
                 }
             }
         }
 
+    }
+
+    private Integer defineNumOfLegalLimitOfHours(LocalDateTime startTime) {
+        Integer legalLimitOfHours = 0;
+
+        Integer hoursThatWouldBeWorked = hoursWorkedPerWeek + MAXIMUM_HOURS_PER_DAY;
+        if( hoursThatWouldBeWorked > MAXIMUM_HOURS_PER_WEEK)
+            legalLimitOfHours = MAXIMUM_HOURS_PER_WEEK - hoursWorkedPerWeek;
+        else
+            legalLimitOfHours= MAXIMUM_HOURS_PER_DAY;
+
+        if( startTime.getDayOfWeek() == DayOfWeek.SUNDAY)
+            legalLimitOfHours = MAXIMUM_HOURS_PER_DAY;
+
+        return  legalLimitOfHours;
     }
 
     public static LocalDateTime parseTime(String timeString, LocalDate date, TimeFormat formatType) {
@@ -162,20 +195,57 @@ public class FileDataProcessor {
 
         TimeRange timeRange = new TimeRange(startTime, endTime);
 
-        return maxi.validateLunchHour(timeRange) ;
+        return maxi.validateLunchHour(timeRange);
+    }
+
+    private void addPastWorkedDays(LocalDate initDateFortNight, DayOfWeek dayOfWeek){
+
+        int hoursWorkedInTheLastFortnight = payrollPersistent.getLastHoursWorkedInTheLastWeekByFortnight(initDateFortNight);
+
+        if(hoursWorkedInTheLastFortnight != NO_VALUES_FOUND){
+            hoursWorkedPerWeek += hoursWorkedInTheLastFortnight;
+        }else{
+            hoursWorkedPerWeek +=  switch (dayOfWeek){
+                case TUESDAY -> 8; case WEDNESDAY -> 16; case THURSDAY -> 24; case FRIDAY -> 32; case SATURDAY -> 40; case SUNDAY -> MAXIMUM_HOURS_PER_WEEK; default -> MAXIMUM_HOURS_PER_WEEK;
+            };
+        }
+
+        isQuantityOfPastWorkedDaysAdded = true;
     }
 
     private void addHoursWorkedBasedOnTimeRange(TimeRange currentTimeRange){
-        Long hoursWorkedPerDay = Duration.between(
-                currentTimeRange.getStartTime(), currentTimeRange.getEndTime() ).toHours();
 
-        if (hoursWorkedPerDay > MAX_HOURS_BY_DAY)
-            hoursWorkedPerWeek += MAX_HOURS_BY_DAY;
+        Integer hoursWorkedPerDay = (int) Duration.between(
+                currentTimeRange.getStartTime(), currentTimeRange.getEndTime()
+        ).toHours();
+
+        if (hoursWorkedPerDay > MAXIMUM_HOURS_PER_DAY)
+            hoursWorkedPerWeek += MAXIMUM_HOURS_PER_DAY;
         else
-            hoursWorkedPerWeek += hoursWorkedPerDay ;
+            hoursWorkedPerWeek += hoursWorkedPerDay;
+
+
+
     }
 
-    private void addHoursWorkedBasedOnAbsentReason( Long hourToSum){
+
+    private void checkFirstWeekToAddWorkedHorusInTheLastFortnight(LocalDate initDateOfFortnight, LocalDate currentDate) {
+        if(Boolean.TRUE.equals( quantityOfWeeksStarted == 0 && !isQuantityOfPastWorkedDaysAdded )) addPastWorkedDays(initDateOfFortnight, currentDate.getDayOfWeek());
+
+    }
+
+    private void resetNumOfWeeksStarted() {
+        quantityOfWeeksStarted = 0;
+        isQuantityOfPastWorkedDaysAdded = false;
+        hoursWorkedPerWeek = 0;
+    }
+
+    private void checkMondaysToIncreaseNumOfWeeksStarted(LocalDate currentDate) {
+        if(currentDate.getDayOfWeek() == DayOfWeek.MONDAY)
+            quantityOfWeeksStarted++;
+    }
+
+    private void addHoursWorkedBasedOnAbsentReason( Integer hourToSum){
 
             hoursWorkedPerWeek += hourToSum ;
     }
@@ -208,7 +278,7 @@ public class FileDataProcessor {
     private void addAbsenteeismReasonToEmployee(String reason){
         AbsenteeismReason absenteeismReason = new AbsenteeismReason();
         absenteeismReason.setAbsenceReasonsEnum(AbsenceReasonsEnum.valueOf(reason));
-        absenteeismReason.setQuantityOfHours(MAX_HOURS_BY_DAY);
+        absenteeismReason.setQuantityOfHours(MAXIMUM_HOURS_PER_DAY);
         employee.addNewAbsenteeismReason(absenteeismReason);
     }
 
