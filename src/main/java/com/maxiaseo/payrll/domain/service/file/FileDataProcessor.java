@@ -103,13 +103,13 @@ public class FileDataProcessor {
 
             Integer legalLimitOfHours = defineNumOfLegalLimitOfHours(startTime);
 
-            for (Surcharge surcharge : SurchargeCalculator.getSurchargeList(startTime, endTime, legalLimitOfHours)) {
+            for (Surcharge surcharge : SurchargeCalculator.getSurchargeList(startTime, endTime, legalLimitOfHours, "1423500")) {
                 if (surcharge.getQuantityOfMinutes() != 0) {
                     employee.addNewSurcharge(surcharge);
                 }
             }
 
-            for (Overtime overtime : OvertimeCalculator.getOvertimeList(startTime, endTime, legalLimitOfHours)) {
+            for (Overtime overtime : OvertimeCalculator.getOvertimeList(startTime, endTime, legalLimitOfHours, "1423500")) {
                 if (overtime.getQuantityOfMinutes() != 0) {
                     employee.addNewOverTime(overtime);
                 }
@@ -224,8 +224,6 @@ public class FileDataProcessor {
         else
             hoursWorkedPerWeek += hoursWorkedPerDay;
 
-
-
     }
 
 
@@ -268,7 +266,7 @@ public class FileDataProcessor {
     }
 
     private void addOvertimeSurchargeToEmployee (LocalDateTime startTime, LocalDateTime endTime){
-        for (OvertimeSurcharge overtimeSurcharge : OvertimeSurchargeCalculator.getOvertimeSurchargeList(startTime, endTime)) {
+        for (OvertimeSurcharge overtimeSurcharge : OvertimeSurchargeCalculator.getOvertimeSurchargeList(startTime, endTime, "1423500")) {
             if (overtimeSurcharge.getQuantityOfMinutes() != 0) {
                 employee.addNewOverTimeSurcharge(overtimeSurcharge);
             }

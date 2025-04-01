@@ -15,16 +15,16 @@ class SurchargeCalculatorTest {
 
     @ParameterizedTest
     @CsvSource({
-            "2024-09-20T18:00, 2024-09-21T02:00, 300",
-            "2024-09-20T18:00, 2024-09-21T01:30, 270",
-            "2024-09-20T02:00, 2024-09-20T09:00, 240",
-            "2024-09-20T18:00, 2024-09-21T16:00, 300"
+            "2024-09-20T18:00, 2024-09-21T02:00, 300, 10831.00",
+            "2024-09-20T18:00, 2024-09-21T01:30, 270, 9747.90",
+            "2024-09-20T02:00, 2024-09-20T09:00, 240, 8664.80",
+            "2024-09-20T18:00, 2024-09-21T16:00, 300, 10831.00"
     })
-    void testNightSurcharge(String startStr, String endStr, Long expectedValue) {
+    void testNightSurcharge(String startStr, String endStr, Long expectedQuantity, String expectedMoneyValue) {
         LocalDateTime start = LocalDateTime.parse(startStr);
         LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
+        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY, "1423500" );
 
         Surcharge nightSurcharge = result.stream()
                 .filter(s -> s.getSurchargeTypeEnum() == SurchargeTypeEnum.NIGHT)
@@ -34,20 +34,21 @@ class SurchargeCalculatorTest {
         assertEquals(1, result.size());
 
         assertEquals(SurchargeTypeEnum.NIGHT, nightSurcharge.getSurchargeTypeEnum());
-        assertEquals(expectedValue, nightSurcharge.getQuantityOfMinutes());
+        assertEquals(expectedQuantity, nightSurcharge.getQuantityOfMinutes());
+        assertEquals(expectedMoneyValue, nightSurcharge.getMoneyCost().toString());
     }
 
     @ParameterizedTest
     @CsvSource({
-            "2024-09-22T04:00, 2024-09-22T10:00, 240",
-            "2024-09-22T16:00, 2024-09-22T23:00, 300",
-            "2024-09-22T04:00, 2024-09-22T23:00, 360"
+            "2024-09-22T04:00, 2024-09-22T10:00, 240, 18567.40",
+            "2024-09-22T16:00, 2024-09-22T23:00, 300, 23209.25",
+            "2024-09-22T04:00, 2024-09-22T23:00, 360, 27851.10"
     })
-    void testHolidaySurcharge(String startStr, String endStr, Long expectedValue) {
+    void testHolidaySurcharge(String startStr, String endStr, Long expectedQuantity, String expectedMoneyValue) {
         LocalDateTime start = LocalDateTime.parse(startStr);
         LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
+        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY , "1423500");
 
         Surcharge holidaySurcharge = result.stream()
                 .filter(s -> s.getSurchargeTypeEnum() == SurchargeTypeEnum.HOLIDAY)
@@ -57,19 +58,20 @@ class SurchargeCalculatorTest {
         assertEquals(2, result.size());
 
         assertEquals(SurchargeTypeEnum.HOLIDAY, holidaySurcharge.getSurchargeTypeEnum());
-        assertEquals(expectedValue, holidaySurcharge.getQuantityOfMinutes());  // 8 hours of holiday overtime
+        assertEquals(expectedQuantity, holidaySurcharge.getQuantityOfMinutes());
+        assertEquals(expectedMoneyValue, holidaySurcharge.getMoneyCost().toString());
     }
 
     @ParameterizedTest
     @CsvSource({
-            "2024-09-22T18:00, 2024-09-22T23:00, 120",
-            "2024-09-22T03:00, 2024-09-22T10:00, 180"
+            "2024-09-22T18:00, 2024-09-22T23:00, 120, 13616.08",
+            "2024-09-22T03:00, 2024-09-22T10:00, 180, 20424.12"
     })
-    void testNightHolidaySurcharge(String startStr, String endStr, Long expectedValue) {
+    void testNightHolidaySurcharge(String startStr, String endStr, Long expectedQuantity, String expectedMoneyValue) {
         LocalDateTime start = LocalDateTime.parse(startStr);
         LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
+        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY,  "1423500");
 
         Surcharge nightHolidaySurcharge = result.stream()
                 .filter(s -> s.getSurchargeTypeEnum() == SurchargeTypeEnum.NIGHT_HOLIDAY)
@@ -79,7 +81,9 @@ class SurchargeCalculatorTest {
         assertEquals(2, result.size());
 
         assertEquals(SurchargeTypeEnum.NIGHT_HOLIDAY, nightHolidaySurcharge.getSurchargeTypeEnum());
-        assertEquals(expectedValue, nightHolidaySurcharge.getQuantityOfMinutes());  // 8 hours of night holiday overtime
+        assertEquals(expectedQuantity, nightHolidaySurcharge.getQuantityOfMinutes());
+        assertEquals(expectedMoneyValue, nightHolidaySurcharge.getMoneyCost().toString());
+
     }
 
     @ParameterizedTest
@@ -91,7 +95,7 @@ class SurchargeCalculatorTest {
         LocalDateTime start = LocalDateTime.parse(startStr);
         LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
+        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY, "1423500");
 
         Surcharge nightSurcharge = result.stream()
                 .filter(s -> s.getSurchargeTypeEnum() == SurchargeTypeEnum.NIGHT)

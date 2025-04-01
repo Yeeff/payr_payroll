@@ -9,6 +9,7 @@ public class OvertimeSurcharge {
     private LocalDateTime start;
     private LocalDateTime end;
     private Long quantityOfMinutes;
+    private Money moneyCost;
     private OvertimeSurchargeTypeEnum overtimeSurchargeTypeEnum;
 
     public OvertimeSurcharge() {
@@ -48,11 +49,17 @@ public class OvertimeSurcharge {
         this.end = end;
     }
 
-    public void setQuantityOfMinutes(Long quantityOfMinutes) {
-        this.quantityOfMinutes = quantityOfMinutes;
+    public Money getMoneyCost() {
+        return moneyCost;
+    }
+
+    public void setMoneyCost(Money moneyCost) {
+        this.moneyCost = moneyCost;
     }
 
     public void setOvertimeSurchargeTypeEnum(OvertimeSurchargeTypeEnum overtimeSurchargeTypeEnum) {
         this.overtimeSurchargeTypeEnum = overtimeSurchargeTypeEnum;
     }
+
+
 }

@@ -1,6 +1,8 @@
 package com.maxiaseo.payrll.domain.service.processor;
 
+import com.maxiaseo.payrll.domain.model.Money;
 import com.maxiaseo.payrll.domain.model.Overtime;
+import com.maxiaseo.payrll.domain.util.ConstantsDomain;
 import com.maxiaseo.payrll.domain.util.ConstantsDomain.OvertimeTypeEnum;
 
 import java.time.DayOfWeek;
@@ -13,11 +15,16 @@ import static com.maxiaseo.payrll.domain.util.ConstantsDomain.*;
 
 public class OvertimeCalculator {
 
+    private static final Money DAY_RATE_MULTIPLIER = new Money("1.25");
+    private static final Money NIGHT_RATE_MULTIPLIER = new Money("1.75");
+    private static final Money HOLIDAY_RATE_MULTIPLIER = new Money("2.00");
+    private static final Money NIGHT_HOLIDAY_RATE_MULTIPLIER = new Money("2.50");
+
     private OvertimeCalculator() {
     }
 
 
-    public static List<Overtime> getOvertimeList(LocalDateTime start, LocalDateTime end, Integer maximumLegalHours) {
+    public static List<Overtime> getOvertimeList(LocalDateTime start, LocalDateTime end, Integer maximumLegalHours, String monthlyPayment) {
 
         List<Overtime> overtimeList = new ArrayList<>();
 
@@ -50,6 +57,8 @@ public class OvertimeCalculator {
         if (overtimeNight.getQuantityOfMinutes() != 0) overtimeList.add(overtimeNight);
         if (overtimeHoliday.getQuantityOfMinutes() != 0) overtimeList.add(overtimeHoliday);
         if (overtimeHolidayNight.getQuantityOfMinutes() != 0) overtimeList.add(overtimeHolidayNight);
+
+        calculateOvertimeCosts(overtimeList, monthlyPayment);
 
         return overtimeList;
     }
@@ -88,6 +97,31 @@ public class OvertimeCalculator {
         overtime.increasValueOfStep();
 
         return overtime;
+    }
+
+    public static void calculateOvertimeCosts(List<Overtime> overtimeList, String monthlyPayment) {
+
+        Money baseMonthlyPayment = new Money(monthlyPayment);
+        Money legalHoursWorkedPerMonth = new Money(String.valueOf(MAXIMUM_HOURS_PER_WEEK * 5));
+        Money baseHourlyRate = baseMonthlyPayment.divide(legalHoursWorkedPerMonth);
+
+        for (Overtime overtime : overtimeList) {
+            Money overtimeRate = getOvertimeMultiplier(overtime.getOvertimeTypeEnum());
+            Money minutesWorked = new Money(overtime.getQuantityOfMinutes().toString());
+            Money hourlyRate = baseHourlyRate.multiply(overtimeRate);
+
+            Money overtimeCost = hourlyRate.multiply(minutesWorked).divide(new Money(String.valueOf(60)));
+
+            overtime.setMoneyCost(overtimeCost);
+        }
+    }
+    private static Money getOvertimeMultiplier(ConstantsDomain.OvertimeTypeEnum overtimeType) {
+        return switch (overtimeType) {
+            case DAY -> DAY_RATE_MULTIPLIER;
+            case NIGHT -> NIGHT_RATE_MULTIPLIER;
+            case HOLIDAY -> HOLIDAY_RATE_MULTIPLIER;
+            case NIGHT_HOLIDAY -> NIGHT_HOLIDAY_RATE_MULTIPLIER;
+        };
     }
 
 }

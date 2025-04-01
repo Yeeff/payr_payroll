@@ -15,15 +15,16 @@ class OvertimeCalculatorTest {
 
     @ParameterizedTest
     @CsvSource({
-            "2024-09-20T07:00, 2024-09-20T16:00, 60",
-            "2024-09-20T07:00, 2024-09-20T16:30, 90",
-            "2024-09-20T07:00, 2024-09-20T18:00, 180",
+            "2024-09-20T07:00, 2024-09-20T16:00, 60, 7736.41 ",
+            "2024-09-20T07:00, 2024-09-20T16:30, 90, 11604.62",
+            "2024-09-20T07:00, 2024-09-20T18:00, 180, 23209.23",
     })
-    void testDayOvertime(String startStr, String endStr, long expectedMinutes) {
+    void testDayOvertime(String startStr, String endStr, long expectedQuantity, String expectedMoneyValue) {
+
         LocalDateTime start = LocalDateTime.parse(startStr);
         LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
+        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY, "1423500");
 
         Overtime dayOvertime = result.stream()
                 .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.DAY)
@@ -32,19 +33,20 @@ class OvertimeCalculatorTest {
 
         assertEquals(1, result.size());
         assertEquals(OvertimeTypeEnum.DAY, dayOvertime.getOvertimeTypeEnum());
-        assertEquals(expectedMinutes, dayOvertime.getQuantityOfMinutes());
+        assertEquals(expectedQuantity, dayOvertime.getQuantityOfMinutes());
+        assertEquals(expectedMoneyValue, dayOvertime.getMoneyCost().toString() );
     }
 
     @ParameterizedTest
     @CsvSource({
-            "2024-09-19T14:00, 2024-09-19T23:00, 60",
-            "2024-09-19T14:00, 2024-09-20T02:00, 240"
+            "2024-09-19T14:00, 2024-09-19T23:00, 60, 10830.98",
+            "2024-09-19T14:00, 2024-09-20T02:00, 240, 43323.92"
     })
-    void testNightOverTime(String startStr, String endStr, Long expectedValue) {
+    void testNightOverTime(String startStr, String endStr, Long expectedQuantity, String expectedMoneyValue) {
             LocalDateTime start = LocalDateTime.parse(startStr);
         LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
+        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY,  "1423500");
 
         Overtime dayOvertime = result.stream()
                 .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.NIGHT)
@@ -54,19 +56,20 @@ class OvertimeCalculatorTest {
         assertEquals(1, result.size());
 
         assertEquals(OvertimeTypeEnum.NIGHT, dayOvertime.getOvertimeTypeEnum());
-        assertEquals(expectedValue, dayOvertime.getQuantityOfMinutes());
+        assertEquals(expectedQuantity, dayOvertime.getQuantityOfMinutes());
+        assertEquals(expectedMoneyValue, dayOvertime.getMoneyCost().toString());
     }
 
     @ParameterizedTest
     @CsvSource({
-            "2024-09-22T08:00, 2024-09-22T17:00, 60",
-            "2024-09-22T08:00, 2024-09-22T19:00, 180"
+            "2024-09-22T08:00, 2024-09-22T17:00, 60, 12378.26",
+            "2024-09-22T08:00, 2024-09-22T19:00, 180, 37134.78"
     })
-    void testHolidayOverTime(String startStr, String endStr, Long expectedValue) {
+    void testHolidayOverTime(String startStr, String endStr, Long expectedQuantity, String expectedMoneyValue) {
         LocalDateTime start = LocalDateTime.parse(startStr);
         LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
+        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY, "1423500");
 
         Overtime dayOvertime = result.stream()
                 .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.HOLIDAY)
@@ -76,19 +79,20 @@ class OvertimeCalculatorTest {
         assertEquals(1, result.size());
 
         assertEquals(OvertimeTypeEnum.HOLIDAY, dayOvertime.getOvertimeTypeEnum());
-        assertEquals(expectedValue, dayOvertime.getQuantityOfMinutes());
+        assertEquals(expectedQuantity, dayOvertime.getQuantityOfMinutes());
+        assertEquals(expectedMoneyValue, dayOvertime.getMoneyCost().toString());
     }
 
     @ParameterizedTest
     @CsvSource({
-            "2024-09-21T18:00, 2024-09-22T03:00, 60",
-            "2024-09-21T18:00, 2024-09-22T05:00, 180"
+            "2024-09-21T18:00, 2024-09-22T03:00, 60, 15472.83",
+            "2024-09-21T18:00, 2024-09-22T05:00, 180, 46418.49"
     })
-    void testHolidayNightOverTime(String startStr, String endStr, Long expectedValue) {
+    void testHolidayNightOverTime(String startStr, String endStr, Long expectedQuantity, String expectedMoneyValue) {
         LocalDateTime start = LocalDateTime.parse(startStr);
         LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
+        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY, "1423500");
 
         Overtime dayOvertime = result.stream()
                 .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.NIGHT_HOLIDAY)
@@ -98,7 +102,8 @@ class OvertimeCalculatorTest {
         assertEquals(1, result.size());
 
         assertEquals(OvertimeTypeEnum.NIGHT_HOLIDAY, dayOvertime.getOvertimeTypeEnum());
-        assertEquals(expectedValue, dayOvertime.getQuantityOfMinutes());
+        assertEquals(expectedQuantity, dayOvertime.getQuantityOfMinutes());
+        assertEquals(expectedMoneyValue, dayOvertime.getMoneyCost().toString());
     }
 
     @ParameterizedTest
@@ -110,7 +115,7 @@ class OvertimeCalculatorTest {
         LocalDateTime start = LocalDateTime.parse(startStr);
         LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
+        List<Overtime> result = OvertimeCalculator.getOvertimeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY, "1423500");
 
         Overtime dayOvertime = result.stream()
                 .filter(s -> s.getOvertimeTypeEnum() == OvertimeTypeEnum.DAY)

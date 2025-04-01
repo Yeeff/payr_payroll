@@ -31,8 +31,7 @@ public class ConstantsDomain {
     public enum SurchargeTypeEnum {
         NIGHT,
         HOLIDAY,
-        NIGHT_HOLIDAY,
-        DAY
+        NIGHT_HOLIDAY
     }
 
     public enum AbsenceReasonsEnum {

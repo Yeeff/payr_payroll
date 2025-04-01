@@ -1,6 +1,8 @@
 package com.maxiaseo.payrll.domain.service.processor;
 
+import com.maxiaseo.payrll.domain.model.Money;
 import com.maxiaseo.payrll.domain.model.Surcharge;
+import com.maxiaseo.payrll.domain.util.ConstantsDomain;
 import com.maxiaseo.payrll.domain.util.ConstantsDomain.SurchargeTypeEnum;
 
 import java.time.DayOfWeek;
@@ -13,10 +15,14 @@ import static com.maxiaseo.payrll.domain.util.ConstantsDomain.*;
 
 public class SurchargeCalculator {
 
+    private static final Money NIGHT_RATE_MULTIPLIER = new Money("0.35");
+    private static final Money HOLIDAY_RATE_MULTIPLIER = new Money("0.75");
+    private static final Money NIGHT_HOLIDAY_RATE_MULTIPLIER = new Money("1.1");
+
     private SurchargeCalculator(){}
 
 
-    public static List<Surcharge> getSurchargeList(LocalDateTime start, LocalDateTime end, Integer maximumLegalHours) {
+    public static List<Surcharge> getSurchargeList(LocalDateTime start, LocalDateTime end, Integer maximumLegalHours, String monthlyPayment) {
 
         List<Surcharge> surchargesList = new ArrayList<>();
 
@@ -48,6 +54,8 @@ public class SurchargeCalculator {
         if (surchargeHoliday.getQuantityOfMinutes() != 0) surchargesList.add(surchargeHoliday);
         if (surchargeHolidayNight.getQuantityOfMinutes() != 0) surchargesList.add(surchargeHolidayNight);
 
+        calculateOvertimeCosts(surchargesList, monthlyPayment);
+
         return surchargesList;
     }
 
@@ -68,7 +76,7 @@ public class SurchargeCalculator {
         } else if (isNightSurcharge) {
             return SurchargeTypeEnum.NIGHT;
         } else {
-            return SurchargeTypeEnum.DAY;
+            return null;
         }
     }
 
@@ -83,6 +91,31 @@ public class SurchargeCalculator {
         surcharge.increaseValueOfStep();
 
         return surcharge;
+    }
+
+
+    public static void calculateOvertimeCosts(List<Surcharge> surchargeList, String monthlyPayment) {
+
+        Money baseMonthlyPayment = new Money(monthlyPayment);
+        Money legalHoursWorkedPerMonth = new Money(String.valueOf(MAXIMUM_HOURS_PER_WEEK * 5));
+        Money baseHourlyRate = baseMonthlyPayment.divide(legalHoursWorkedPerMonth);
+
+        for (Surcharge surcharge : surchargeList) {
+            Money overtimeRate = getOvertimeMultiplier(surcharge.getSurchargeTypeEnum());
+            Money minutesWorked = new Money(surcharge.getQuantityOfMinutes().toString());
+            Money hourlyRate = baseHourlyRate.multiply(overtimeRate);
+
+            Money surchargeCost = hourlyRate.multiply(minutesWorked).divide(new Money(String.valueOf(60)));
+
+            surcharge.setMoneyCost(surchargeCost);
+        }
+    }
+    private static Money getOvertimeMultiplier(ConstantsDomain.SurchargeTypeEnum surchargeTypeEnum) {
+        return switch (surchargeTypeEnum) {
+            case NIGHT -> NIGHT_RATE_MULTIPLIER;
+            case HOLIDAY -> HOLIDAY_RATE_MULTIPLIER;
+            case NIGHT_HOLIDAY -> NIGHT_HOLIDAY_RATE_MULTIPLIER;
+        };
     }
 
 }

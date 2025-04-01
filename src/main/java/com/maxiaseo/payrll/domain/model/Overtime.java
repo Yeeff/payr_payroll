@@ -9,6 +9,7 @@ public class Overtime {
     private LocalDateTime start;
     private LocalDateTime end;
     private Long quantityOfMinutes;
+    private Money moneyCost;
     private ConstantsDomain.OvertimeTypeEnum overtimeTypeEnum;
 
     public Overtime() {
@@ -49,8 +50,12 @@ public class Overtime {
         this.end = end;
     }
 
-    public void setQuantityOfMinutes(Long quantityOfMinutes) {
-        this.quantityOfMinutes = quantityOfMinutes;
+    public Money getMoneyCost() {
+        return moneyCost;
+    }
+
+    public void setMoneyCost(Money moneyCost) {
+        this.moneyCost = moneyCost;
     }
 
     public void setOvertimeTypeEnum(ConstantsDomain.OvertimeTypeEnum overtimeTypeEnum) {
