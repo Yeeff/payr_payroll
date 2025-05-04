@@ -1,10 +1,10 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.4.3'
+	id 'org.springframework.boot' version '3.4.5'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'com.maxiaseo'
+group = 'com.horizonx'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -15,10 +15,6 @@ java {
 
 repositories {
 	mavenCentral()
-}
-
-ext {
-	set('springCloudVersion', "2024.0.0")
 }
 
 dependencies {
@@ -45,7 +41,7 @@ dependencies {
 
 dependencyManagement {
 	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:2024.0.0"
 	}
 }
 
