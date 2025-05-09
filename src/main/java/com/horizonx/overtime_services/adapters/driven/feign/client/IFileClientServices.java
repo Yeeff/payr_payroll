@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Component
 public interface IFileClientServices {
 
-    @GetMapping("/content/{fileName}")
-    FileResponseDto getContentFile(@PathVariable String fileName);
+    @GetMapping("/content-by-formId/{formId}")
+    FileResponseDto getContentFile(@PathVariable Integer formId);
 
 }

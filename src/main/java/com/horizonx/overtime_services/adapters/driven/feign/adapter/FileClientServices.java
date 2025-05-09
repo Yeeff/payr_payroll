@@ -19,11 +19,11 @@ public class FileClientServices implements IFileServicePort {
     }
 
     @Override
-    public ScheduleEmployeesFile getFileWithContent(String fileName)  {
+    public ScheduleEmployeesFile getFileWithContent(Integer formId)  {
         try {
-            return fileMapper.toModel(fileServicesClient.getContentFile(fileName));
+            return fileMapper.toModel(fileServicesClient.getContentFile(formId));
         } catch (FeignException.NotFound e) {
-            throw new ScheduleFileNotFoundException( fileName);
+            throw new ScheduleFileNotFoundException( formId.toString());
         } catch (FeignException e) {
             throw new FileServiceException( e.getMessage());
         }

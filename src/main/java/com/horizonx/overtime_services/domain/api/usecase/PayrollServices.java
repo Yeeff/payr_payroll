@@ -23,9 +23,9 @@ public class PayrollServices implements IPayrollServicesPort {
         this.fileServicesClient = fileServicesApi;
     }
 
-    public List<Employee> processDataByFileName(String tempFileName) throws ScheduleFileNotFoundException {
+    public List<Employee> processDataByFileName(Integer formId) throws ScheduleFileNotFoundException {
 
-        ScheduleEmployeesFile scheduleEmployeesFile= fileServicesClient.getFileWithContent(tempFileName);
+        ScheduleEmployeesFile scheduleEmployeesFile= fileServicesClient.getFileWithContent(formId);
 
         return extractSurchargesAndOvertimesFromScheduleData(scheduleEmployeesFile);
 

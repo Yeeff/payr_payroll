@@ -27,12 +27,12 @@ public class PayrollController {
     private File tempFile; // Store reference to the temp file
 
 
-    @GetMapping("/process-info/{fileName}")
+    @GetMapping("/process-info/{formId}")
     public ResponseEntity<List<EmployeeResponseDto>> handleFileUpload(
-            @PathVariable String fileName) throws IOException {
+            @PathVariable Integer formId) throws IOException {
 
         List<EmployeeResponseDto>  result = employeeMapper.toEmployeeResponseDtoList(
-                payrollServices.processDataByFileName(fileName)
+                payrollServices.processDataByFileName(formId)
         );
 
         return ResponseEntity.ok(result);

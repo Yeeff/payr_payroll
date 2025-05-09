@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface IPayrollServicesPort {
-    List<Employee> processDataByFileName(String tempFileName) throws IOException;
+    List<Employee> processDataByFileName(Integer formId) throws IOException;
     List<Employee> processDataByScheduleInfo(ScheduleEmployeesFile scheduleEmployeesFile);
 
 }

@@ -75,7 +75,7 @@ public class FileDataProcessor {
                         addHoursWorkedBasedOnTimeRange(currentTimeRange);
                     } else if(isValidAbsenceReason(cellValue) && !cellValue.equals(AbsenceReasonsEnum.AUS.toString())  ) {
                         addHoursWorkedBasedOnAbsentReason(MAXIMUM_HOURS_PER_DAY);
-                        addAbsenteeismReasonToEmployee(cellValue);
+                        addAbsenteeismReasonToEmployee(cellValue, currentDate);
                     }
                 }
 
@@ -274,11 +274,16 @@ public class FileDataProcessor {
         }
     }
 
-    private void addAbsenteeismReasonToEmployee(String reason){
-        AbsenteeismReason absenteeismReason = new AbsenteeismReason();
-        absenteeismReason.setAbsenceReasonsEnum(AbsenceReasonsEnum.valueOf(reason));
-        absenteeismReason.setQuantityOfHours(MAXIMUM_HOURS_PER_DAY);
-        employee.addNewAbsenteeismReason(absenteeismReason);
+    private void addAbsenteeismReasonToEmployee(String reason, LocalDate currentDate){
+
+       if(!AbsenceReasonsEnum.DESC.name().equals(reason) && !AbsenceReasonsEnum.VAC.name().equals(reason)){
+           AbsenteeismReason absenteeismReason = new AbsenteeismReason();
+           absenteeismReason.setAbsenceReasonsEnum(AbsenceReasonsEnum.valueOf(reason));
+           absenteeismReason.setQuantityOfHours(MAXIMUM_HOURS_PER_DAY);
+           absenteeismReason.setStart(LocalDateTime.of(currentDate, LocalTime.of(6,00)));
+           employee.addNewAbsenteeismReason(absenteeismReason);
+       }
+
     }
 
 

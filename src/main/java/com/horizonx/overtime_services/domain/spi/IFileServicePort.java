@@ -6,5 +6,5 @@ import com.horizonx.overtime_services.domain.model.ScheduleEmployeesFile;
 
 public interface IFileServicePort {
 
-    ScheduleEmployeesFile getFileWithContent(String fileName)  throws ScheduleFileNotFoundException, FileServiceException;
+    ScheduleEmployeesFile getFileWithContent(Integer formId)  throws ScheduleFileNotFoundException, FileServiceException;
 }

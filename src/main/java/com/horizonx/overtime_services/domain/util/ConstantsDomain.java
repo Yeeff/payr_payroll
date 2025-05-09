@@ -34,7 +34,7 @@ public class ConstantsDomain {
         NIGHT_HOLIDAY,
         DAY
     }
-
+   // PNR,LR, INC
     public enum AbsenceReasonsEnum {
         INC_ARL,        //INCAPACIDAD_ARL
         INC,            //INCAPACIDAD_CON_SOPORTE,
