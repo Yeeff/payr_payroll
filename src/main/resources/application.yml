@@ -1,9 +1,9 @@
 server:
-  port: 8092
+  port: ${PORT:8092}
 
 file-services:
-  url: ${FILE_API_URL:http://localhost:8090}
-  #url: https://maxi-api-file-1034515474137.southamerica-east1.run.app
+  #url: ${FILE_API_URL:http://localhost:8090}
+  url: https://maxi-api-file-1034515474137.southamerica-east1.run.app
 
 spring:
   datasource:
