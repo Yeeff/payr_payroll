@@ -73,8 +73,11 @@ public class FileDataProcessor {
                         addSurchargeOvertimesToEmployeeBasedOnTimeRange( currentTimeRange.getStartTime(), currentTimeRange.getEndTime());
 
                         addHoursWorkedBasedOnTimeRange(currentTimeRange);
-                    } else if(isValidAbsenceReason(cellValue) && !cellValue.equals(AbsenceReasonsEnum.AUS.toString())  ) {
-                        addHoursWorkedBasedOnAbsentReason(MAXIMUM_HOURS_PER_DAY);
+
+                    } else if(isValidAbsenceReason(cellValue)    ) {
+
+                        if(!cellValue.equals(AbsenceReasonsEnum.AUS.toString())) addHoursWorkedBasedOnAbsentReason(MAXIMUM_HOURS_PER_DAY);
+
                         addAbsenteeismReasonToEmployee(cellValue, currentDate);
                     }
                 }
@@ -278,7 +281,6 @@ public class FileDataProcessor {
     private void addAbsenteeismReasonToEmployee(String reason, LocalDate currentDate){
 
        if(!AbsenceReasonsEnum.DESC.name().equals(reason)
-               && !AbsenceReasonsEnum.VAC.name().equals(reason)
                && !AbsenceReasonsEnum.INC_FONDO.name().equals(reason)){
            AbsenteeismReason absenteeismReason = new AbsenteeismReason();
            absenteeismReason.setAbsenceReasonsEnum(AbsenceReasonsEnum.valueOf(reason));
