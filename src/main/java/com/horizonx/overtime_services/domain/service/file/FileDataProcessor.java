@@ -283,6 +283,7 @@ public class FileDataProcessor {
 
        if(!AbsenceReasonsEnum.DESC.name().equals(reason)
                && !AbsenceReasonsEnum.INC_FONDO.name().equals(reason)){
+
            AbsenteeismReason absenteeismReason = new AbsenteeismReason();
            absenteeismReason.setAbsenceReasonsEnum(AbsenceReasonsEnum.valueOf(reason));
            absenteeismReason.setQuantityOfHours(MAXIMUM_HOURS_PER_DAY);

@@ -45,6 +45,8 @@ public class ConstantsDomain {
         EPS,            //COLABORADOR_EN_EPS,
         RET,            //RETIRO
         DESC,            //DESCANSO
+        SUS,             //SUSPENSION
+        DLF,             //FAMILY DAY
         INC_FONDO,
         VAC,
         LM,
