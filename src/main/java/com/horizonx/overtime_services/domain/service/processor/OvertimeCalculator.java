@@ -4,6 +4,7 @@ import com.horizonx.overtime_services.domain.model.Overtime;
 import com.horizonx.overtime_services.domain.util.ConstantsDomain.OvertimeTypeEnum;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -62,12 +63,18 @@ public class OvertimeCalculator {
         }
 
         DayOfWeek day = dateTime.getDayOfWeek();
-        boolean isNightSurcharge = (time.isAfter(NIGHT_START) || time.isBefore(NIGHT_END) || time.equals(NIGHT_END));
-        boolean isSunday = day == DayOfWeek.SUNDAY;
 
-        if (isSunday && isNightSurcharge) {
+        LocalDate date = dateTime.toLocalDate();
+
+        boolean isHoliday = holidays.contains(date);
+        boolean isSunday = day == DayOfWeek.SUNDAY;
+        boolean isHolidayOrSunday = isSunday || isHoliday;
+
+        boolean isNightSurcharge = (time.isAfter(NIGHT_START) || time.isBefore(NIGHT_END) || time.equals(NIGHT_END));
+
+        if (isHolidayOrSunday && isNightSurcharge) {
             return OvertimeTypeEnum.NIGHT_HOLIDAY;
-        } else if (isSunday) {
+        } else if (isHolidayOrSunday) {
             return OvertimeTypeEnum.HOLIDAY;
         } else if (isNightSurcharge) {
             return OvertimeTypeEnum.NIGHT;

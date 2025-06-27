@@ -4,6 +4,7 @@ import com.horizonx.overtime_services.domain.model.Surcharge;
 import com.horizonx.overtime_services.domain.util.ConstantsDomain.SurchargeTypeEnum;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -56,14 +57,20 @@ public class SurchargeCalculator {
         if(time.equals(LocalTime.of(0,0))) {
             dateTime =dateTime.minusMinutes(1);
         }
+
         DayOfWeek day = dateTime.getDayOfWeek();
 
-        boolean isNightSurcharge = (time.isAfter(NIGHT_START) || time.equals(NIGHT_END)) || time.isBefore(NIGHT_END);
-        boolean isSunday = day == DayOfWeek.SUNDAY;
+        LocalDate date = dateTime.toLocalDate();
 
-        if (isSunday && isNightSurcharge) {
+        boolean isHoliday =  holidays.contains(date);
+        boolean isSunday = day == DayOfWeek.SUNDAY;
+        boolean isHolidayOrSunday = isSunday || isHoliday;
+
+        boolean isNightSurcharge = (time.isAfter(NIGHT_START) || time.equals(NIGHT_END)) || time.isBefore(NIGHT_END);
+
+        if (isHolidayOrSunday && isNightSurcharge) {
             return SurchargeTypeEnum.NIGHT_HOLIDAY;
-        } else if (isSunday) {
+        } else if (isHolidayOrSunday) {
             return SurchargeTypeEnum.HOLIDAY;
         } else if (isNightSurcharge) {
             return SurchargeTypeEnum.NIGHT;

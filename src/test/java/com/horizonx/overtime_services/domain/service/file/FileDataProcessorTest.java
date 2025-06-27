@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -79,7 +80,6 @@ class FileDataProcessorTest {
         assertEquals(0.0, employee.getTotalOvertimeSurchargeHoursHoliday() );
         assertEquals(0.0, employee.getTotalOvertimeSurchargeHoursNightHoliday() );
     }
-
 
     @Test
     void testExtractEmployeeDataWithAbsentAndNoDataInPreviousFortnight() {
@@ -274,6 +274,57 @@ class FileDataProcessorTest {
         assertEquals(0, result.size());
 
         assertEquals(true, result.isEmpty() );
+    }
+
+    @Test
+    void testExtractEmployeeDataWithHolidays() {
+        //LocalDate.of(2025, 6 ,23 ), //Corpus Christi
+        // LocalDate.of(2025, 6 , 30), //Dia San Pedro y San Pablo
+        List<List<String>> listOfListData = Arrays.asList(
+                Arrays.asList("CEDULA", "NOMBRE", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "284", "29","30"),
+                Arrays.asList(
+                        "12345678",
+                        "JUAN PEREZ",
+                        "DESC", // Sunday
+                        "6am a 3pm",
+                        "6am a 3pm",
+                        "6am a 3pm",//
+                        "6am a 3pm",
+                        "6am a 3pm",
+                        "6am a 3pm",//
+                        "DESC", // Sunday
+                        "6am a 3pm",//
+                        "6am a 3pm",
+                        "6am a 3pm",
+                        "6am a 3pm",//
+                        "6am a 3pm",
+                        "6am a 3pm",//
+                        "DESC", // Sunday
+                        "6am a 3pm"//
+                )
+        );
+        int year = 2025;
+        int month = 6;
+        int initDay = 15;
+
+        // Act
+        List<Employee> result = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay, ConstantsDomain.TimeFormat.REGULAR);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        Employee employee = result.get(0);
+
+        assertEquals("12345678", employee.getId().toString());
+        assertEquals("JUAN PEREZ", employee.getName());
+
+        assertEquals(0, employee.getTotalSurchargeHoursNight());
+        assertEquals(0, employee.getTotalSurchargeHoursNightHoliday());
+        assertEquals(16, employee.getTotalSurchargeHoursHoliday());
+
+        assertEquals(4, employee.getTotalOvertimeHoursDay());
+        assertEquals(0, employee.getTotalOvertimeHoursNight());
+        assertEquals(0, employee.getTotalOvertimeHoursHoliday());
+        assertEquals(0, employee.getTotalOvertimeHoursNightHoliday());
     }
 
     @Test

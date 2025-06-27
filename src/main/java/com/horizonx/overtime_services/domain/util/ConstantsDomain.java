@@ -1,6 +1,8 @@
 package com.horizonx.overtime_services.domain.util;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Set;
 
 public class ConstantsDomain {
 
@@ -52,6 +54,21 @@ public class ConstantsDomain {
         LM,
         X
     }
+
+    public static Set<LocalDate> holidays = Set.of(
+            LocalDate.of(2025, 5 ,1 ), //Corpus Christi
+            LocalDate.of(2025, 6 ,23 ), //Corpus Christi
+            LocalDate.of(2025, 6 , 30), //Dia San Pedro y San Pablo
+            LocalDate.of(2025, 7, 20),  // Día de la Independencia
+            LocalDate.of(2025, 8, 7),  // Batalla de Boyaca
+            LocalDate.of(2025, 8, 18),  //  La asusncion de la virgen
+            LocalDate.of(2025, 10, 13),  //Dia de la raza
+            LocalDate.of(2025, 11, 3),  // Todos los santos
+            LocalDate.of(2025, 11, 17),  // Independencia de Cartagena
+            LocalDate.of(2025, 12, 8),  // Dia de la inmaculada concepcion
+            LocalDate.of(2025, 12, 25)  // Dia de navidad
+
+    );
 
     public static final Integer FIRST_ROW_WITH_VALID_DATA_INDEX = 1;
     public static final Integer FIRST_COLUM_WITH_VALID_DATA_INDEX = 2;
