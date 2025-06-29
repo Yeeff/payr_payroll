@@ -32,8 +32,10 @@ public class ConstantsDomain {
 
     public enum SurchargeTypeEnum {
         NIGHT,
+        OVERTIME_HOLIDAY,
         HOLIDAY,
         NIGHT_HOLIDAY,
+        OVERTIME_NIGHT_HOLIDAY,
         DAY
     }
    // PNR,LR, INC
@@ -55,7 +57,7 @@ public class ConstantsDomain {
         X
     }
 
-    public static Set<LocalDate> holidays = Set.of(
+    public static final Set<LocalDate> holidays = Set.of(
             LocalDate.of(2025, 5 ,1 ), //Corpus Christi
             LocalDate.of(2025, 6 ,23 ), //Corpus Christi
             LocalDate.of(2025, 6 , 30), //Dia San Pedro y San Pablo

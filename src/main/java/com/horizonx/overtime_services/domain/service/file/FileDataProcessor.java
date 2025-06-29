@@ -3,7 +3,6 @@ package com.horizonx.overtime_services.domain.service.file;
 import com.horizonx.overtime_services.domain.model.*;
 import com.horizonx.overtime_services.domain.service.Maxiaseo;
 import com.horizonx.overtime_services.domain.service.processor.OvertimeCalculator;
-import com.horizonx.overtime_services.domain.service.processor.OvertimeSurchargeCalculator;
 import com.horizonx.overtime_services.domain.service.processor.SurchargeCalculator;
 import com.horizonx.overtime_services.domain.spi.IPayrollPersistentPort;
 import com.horizonx.overtime_services.domain.util.TimeRange;
@@ -98,24 +97,21 @@ public class FileDataProcessor {
 
     private void addSurchargeOvertimesToEmployeeBasedOnTimeRange(LocalDateTime startTime, LocalDateTime endTime) {
 
-        if (hoursWorkedPerWeek >= MAXIMUM_HOURS_PER_WEEK && startTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
+        Boolean isMaximumHoursWorkedPerWeekReached = false;
 
-            addOvertimeSurchargeToEmployee(startTime, endTime);
+        if (hoursWorkedPerWeek >= MAXIMUM_HOURS_PER_WEEK ) isMaximumHoursWorkedPerWeekReached = true;
 
-        } else {
+        Integer legalLimitOfHours = defineNumOfLegalLimitOfHours(startTime);
 
-            Integer legalLimitOfHours = defineNumOfLegalLimitOfHours(startTime);
-
-            for (Surcharge surcharge : SurchargeCalculator.getSurchargeList(startTime, endTime, legalLimitOfHours)) {
-                if (surcharge.getQuantityOfMinutes() != 0) {
-                    employee.addNewSurcharge(surcharge);
-                }
+        for (Surcharge surcharge : SurchargeCalculator.getSurchargeList(startTime, endTime, legalLimitOfHours, isMaximumHoursWorkedPerWeekReached)) {
+            if (surcharge.getQuantityOfMinutes() != 0) {
+                employee.addNewSurcharge(surcharge);
             }
+        }
 
-            for (Overtime overtime : OvertimeCalculator.getOvertimeList(startTime, endTime, legalLimitOfHours)) {
-                if (overtime.getQuantityOfMinutes() != 0) {
-                    employee.addNewOverTime(overtime);
-                }
+        for (Overtime overtime : OvertimeCalculator.getOvertimeList(startTime, endTime, legalLimitOfHours)) {
+            if (overtime.getQuantityOfMinutes() != 0) {
+                employee.addNewOverTime(overtime);
             }
         }
 
@@ -126,6 +122,7 @@ public class FileDataProcessor {
 
         Integer hoursThatWouldBeWorked = hoursWorkedPerWeek + MAXIMUM_HOURS_PER_DAY;
         if( hoursThatWouldBeWorked > MAXIMUM_HOURS_PER_WEEK)
+            //NOTE: What if legalLimitOfHours is over MAXIMUM_HOURS_PER_WEEK in the next operation?
             legalLimitOfHours = MAXIMUM_HOURS_PER_WEEK - hoursWorkedPerWeek;
         else
             legalLimitOfHours= MAXIMUM_HOURS_PER_DAY;
@@ -269,14 +266,6 @@ public class FileDataProcessor {
                         || !employee.getAbsenteeismReasons().isEmpty()
         ) employees.add(employee);
         return employees;
-    }
-
-    private void addOvertimeSurchargeToEmployee (LocalDateTime startTime, LocalDateTime endTime){
-        for (OvertimeSurcharge overtimeSurcharge : OvertimeSurchargeCalculator.getOvertimeSurchargeList(startTime, endTime)) {
-            if (overtimeSurcharge.getQuantityOfMinutes() != 0) {
-                employee.addNewOverTimeSurcharge(overtimeSurcharge);
-            }
-        }
     }
 
     private void addAbsenteeismReasonToEmployee(String reason, LocalDate currentDate){

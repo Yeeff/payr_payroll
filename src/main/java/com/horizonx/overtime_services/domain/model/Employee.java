@@ -1,6 +1,5 @@
 package com.horizonx.overtime_services.domain.model;
 
-import com.horizonx.overtime_services.domain.util.ConstantsDomain.OvertimeSurchargeTypeEnum;
 import com.horizonx.overtime_services.domain.util.ConstantsDomain.OvertimeTypeEnum;
 import com.horizonx.overtime_services.domain.util.ConstantsDomain.SurchargeTypeEnum;
 
@@ -53,6 +52,16 @@ public class Employee {
     }
 
 
+    public Double getTotalOvertimeSurchargeHoursNightHoliday() {
+        return getSumOfSurchargeHoursByType(SurchargeTypeEnum.OVERTIME_NIGHT_HOLIDAY);
+
+    }
+    public Double getTotalOvertimeSurchargeHoursHoliday() {
+        return getSumOfSurchargeHoursByType(SurchargeTypeEnum.OVERTIME_HOLIDAY);
+
+    }
+
+
 
     public Double getTotalOvertimeHoursDay() {
         return getSumOfOvertimeHoursByType(OvertimeTypeEnum.DAY);
@@ -73,24 +82,6 @@ public class Employee {
 
 
 
-    public Double getTotalOvertimeSurchargeHoursNightHoliday() {
-        return getSumOfOvertimeSurchargeHoursByType(OvertimeSurchargeTypeEnum.NIGHT_HOLIDAY);
-
-    }
-    public Double getTotalOvertimeSurchargeHoursHoliday() {
-        return getSumOfOvertimeSurchargeHoursByType(OvertimeSurchargeTypeEnum.HOLIDAY);
-
-    }
-
-
-
-    private Double getSumOfOvertimeSurchargeHoursByType(OvertimeSurchargeTypeEnum type){
-        Long totalMinutes = overtimeSurcharges.stream()
-                .filter(overtimeSurcharge -> overtimeSurcharge.getOvertimeSurchargeTypeEnum() == type)
-                .mapToLong(OvertimeSurcharge::getQuantityOfMinutes)
-                .sum();
-        return totalMinutes / 60.0;
-    }
 
     private Double getSumOfSurchargeHoursByType(SurchargeTypeEnum type){
         Long totalMinutes = surcharges.stream()
@@ -108,10 +99,6 @@ public class Employee {
         return totalMinutes / 60.0;
     }
 
-
-    public void setAbsenteeismReasons(List<AbsenteeismReason> absenteeismReasons) {
-        this.absenteeismReasons = absenteeismReasons;
-    }
 
     public List<AbsenteeismReason> getAbsenteeismReasons() {
         return absenteeismReasons;

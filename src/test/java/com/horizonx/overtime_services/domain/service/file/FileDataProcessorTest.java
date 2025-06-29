@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -129,10 +128,10 @@ class FileDataProcessorTest {
 
         assertEquals(16.0, employee.getTotalOvertimeHoursDay());
         assertEquals(16.0, employee.getTotalOvertimeHoursNight());
-        assertEquals(4.0, employee.getTotalOvertimeHoursHoliday());
+        assertEquals(8.0, employee.getTotalOvertimeHoursHoliday());
         assertEquals(4.0, employee.getTotalOvertimeHoursNightHoliday());
 
-        assertEquals(12, employee.getTotalOvertimeSurchargeHoursHoliday());
+        assertEquals(8, employee.getTotalOvertimeSurchargeHoursHoliday());
         assertEquals(0, employee.getTotalOvertimeSurchargeHoursNightHoliday());
     }
 
@@ -291,14 +290,14 @@ class FileDataProcessorTest {
                         "6am a 3pm",//
                         "6am a 3pm",
                         "6am a 3pm",
-                        "6am a 3pm",//
+                        "6am a 1pm",//
                         "DESC", // Sunday
                         "6am a 3pm",//
                         "6am a 3pm",
                         "6am a 3pm",
                         "6am a 3pm",//
                         "6am a 3pm",
-                        "6am a 3pm",//
+                        "6am a 1pm",//
                         "DESC", // Sunday
                         "6am a 3pm"//
                 )
@@ -319,12 +318,15 @@ class FileDataProcessorTest {
 
         assertEquals(0, employee.getTotalSurchargeHoursNight());
         assertEquals(0, employee.getTotalSurchargeHoursNightHoliday());
-        assertEquals(16, employee.getTotalSurchargeHoursHoliday());
+        assertEquals(0, employee.getTotalSurchargeHoursHoliday());
 
-        assertEquals(4, employee.getTotalOvertimeHoursDay());
+        assertEquals(0, employee.getTotalOvertimeHoursDay());
         assertEquals(0, employee.getTotalOvertimeHoursNight());
         assertEquals(0, employee.getTotalOvertimeHoursHoliday());
         assertEquals(0, employee.getTotalOvertimeHoursNightHoliday());
+
+        assertEquals(16, employee.getTotalOvertimeSurchargeHoursHoliday());
+        assertEquals(0, employee.getTotalOvertimeSurchargeHoursNightHoliday());
     }
 
     @Test
@@ -371,10 +373,10 @@ class FileDataProcessorTest {
 
         assertEquals(0, employee.getTotalOvertimeHoursDay());
         assertEquals(0, employee.getTotalOvertimeHoursNight());
-        assertEquals(0, employee.getTotalOvertimeHoursHoliday());
+        assertEquals(4, employee.getTotalOvertimeHoursHoliday());
         assertEquals(0, employee.getTotalOvertimeHoursNightHoliday());
 
-        assertEquals(8, employee.getTotalOvertimeSurchargeHoursHoliday());
+        assertEquals(4, employee.getTotalOvertimeSurchargeHoursHoliday());
         assertEquals(4, employee.getTotalOvertimeSurchargeHoursNightHoliday());
 
     }

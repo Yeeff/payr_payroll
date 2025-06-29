@@ -17,26 +17,34 @@ public class SurchargeCalculator {
     private SurchargeCalculator(){}
 
 
-    public static List<Surcharge> getSurchargeList(LocalDateTime start, LocalDateTime end, Integer maximumLegalHours) {
+    public static List<Surcharge> getSurchargeList(LocalDateTime start, LocalDateTime end, Integer maximumLegalHours, Boolean isMaximumHoursWorkedPerWeekReached) {
 
         List<Surcharge> surchargesList = new ArrayList<>();
 
         Surcharge surchargeNight = new Surcharge();
         Surcharge surchargeHoliday = new Surcharge();
         Surcharge surchargeHolidayNight = new Surcharge();
+        Surcharge surchargeOvertimeHolidayNight = new Surcharge();
+        Surcharge surchargeOvertimeHoliday = new Surcharge();
 
         LocalDateTime current = start.plusMinutes(STEP_IN_MINUTES);
 
         while (current.isBefore(end) || current.isEqual(end)) {
 
-            if (getSurchargeType(current) == SurchargeTypeEnum.NIGHT) {
+            if (getSurchargeType(current, isMaximumHoursWorkedPerWeekReached) == SurchargeTypeEnum.NIGHT) {
                 surchargeNight = increaseValueOfStepToSurcharge(surchargeNight, current, SurchargeTypeEnum.NIGHT);
             }
-            if (getSurchargeType(current) == SurchargeTypeEnum.HOLIDAY) {
+            if (getSurchargeType(current, isMaximumHoursWorkedPerWeekReached) == SurchargeTypeEnum.HOLIDAY) {
                 surchargeHoliday = increaseValueOfStepToSurcharge(surchargeHoliday, current, SurchargeTypeEnum.HOLIDAY);
             }
-            if (getSurchargeType(current) == SurchargeTypeEnum.NIGHT_HOLIDAY) {
+            if (getSurchargeType(current, isMaximumHoursWorkedPerWeekReached) == SurchargeTypeEnum.NIGHT_HOLIDAY) {
                 surchargeHolidayNight = increaseValueOfStepToSurcharge(surchargeHolidayNight, current, SurchargeTypeEnum.NIGHT_HOLIDAY);
+            }
+            if (getSurchargeType(current, isMaximumHoursWorkedPerWeekReached) == SurchargeTypeEnum.OVERTIME_NIGHT_HOLIDAY) {
+                surchargeOvertimeHolidayNight = increaseValueOfStepToSurcharge(surchargeOvertimeHolidayNight, current, SurchargeTypeEnum.OVERTIME_NIGHT_HOLIDAY);
+            }
+            if (getSurchargeType(current, isMaximumHoursWorkedPerWeekReached) == SurchargeTypeEnum.OVERTIME_HOLIDAY) {
+                surchargeOvertimeHoliday = increaseValueOfStepToSurcharge(surchargeOvertimeHoliday, current, SurchargeTypeEnum.OVERTIME_HOLIDAY);
             }
 
             LocalDateTime maxTimeToCheckSurcharges = start.plusHours(maximumLegalHours );
@@ -48,11 +56,13 @@ public class SurchargeCalculator {
         if (surchargeNight.getQuantityOfMinutes() != 0) surchargesList.add(surchargeNight);
         if (surchargeHoliday.getQuantityOfMinutes() != 0) surchargesList.add(surchargeHoliday);
         if (surchargeHolidayNight.getQuantityOfMinutes() != 0) surchargesList.add(surchargeHolidayNight);
+        if (surchargeOvertimeHolidayNight.getQuantityOfMinutes() != 0) surchargesList.add(surchargeOvertimeHolidayNight);
+        if (surchargeOvertimeHoliday.getQuantityOfMinutes() != 0) surchargesList.add(surchargeOvertimeHoliday);
 
         return surchargesList;
     }
 
-    private static SurchargeTypeEnum getSurchargeType(LocalDateTime dateTime) {
+    private static SurchargeTypeEnum getSurchargeType(LocalDateTime dateTime, Boolean isMaximumHoursWorkedPerWeekReached) {
         LocalTime time = dateTime.toLocalTime();
         if(time.equals(LocalTime.of(0,0))) {
             dateTime =dateTime.minusMinutes(1);
@@ -69,9 +79,19 @@ public class SurchargeCalculator {
         boolean isNightSurcharge = (time.isAfter(NIGHT_START) || time.equals(NIGHT_END)) || time.isBefore(NIGHT_END);
 
         if (isHolidayOrSunday && isNightSurcharge) {
-            return SurchargeTypeEnum.NIGHT_HOLIDAY;
+
+            if(isHoliday) return SurchargeTypeEnum.OVERTIME_NIGHT_HOLIDAY;
+
+            if(isMaximumHoursWorkedPerWeekReached) return SurchargeTypeEnum.OVERTIME_NIGHT_HOLIDAY;
+            else return SurchargeTypeEnum.NIGHT_HOLIDAY;
+
         } else if (isHolidayOrSunday) {
-            return SurchargeTypeEnum.HOLIDAY;
+
+            if(isHoliday) return SurchargeTypeEnum.OVERTIME_HOLIDAY;
+
+            if(isMaximumHoursWorkedPerWeekReached) return SurchargeTypeEnum.OVERTIME_HOLIDAY;
+            else return SurchargeTypeEnum.HOLIDAY;
+
         } else if (isNightSurcharge) {
             return SurchargeTypeEnum.NIGHT;
         } else {
