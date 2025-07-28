@@ -67,12 +67,12 @@ class FileDataProcessorTest {
         assertEquals("15326844", employee.getId().toString());
         assertEquals("NORALDO ISIDRO CARDENAS CARDENAS", employee.getName());
 
-        assertEquals(18.0, employee.getTotalSurchargeHoursNight());
+        assertEquals(16.0, employee.getTotalSurchargeHoursNight());
         assertEquals(3.0, employee.getTotalSurchargeHoursNightHoliday() );
         assertEquals(8.0, employee.getTotalSurchargeHoursHoliday());
 
         assertEquals(2.5, employee.getTotalOvertimeHoursDay());
-        assertEquals(5.5, employee.getTotalOvertimeHoursNight());
+        assertEquals(7.5, employee.getTotalOvertimeHoursNight());
         assertEquals(4.0, employee.getTotalOvertimeHoursHoliday());
         assertEquals(4.0, employee.getTotalOvertimeHoursNightHoliday());
 
@@ -146,14 +146,14 @@ class FileDataProcessorTest {
                         "7am a 4pm"	,
                         "7am a 4pm"	,
                         "7am a 4pm"	,
-                        "7am a 2pm"	,
+                        "7am a 12pm"	,
                         "7am a 4pm", //sunday
                         "7am a 4pm"	,
                         "7am a 4pm"	,
                         "7am a 4pm"	,
                         "7am a 4pm"	,
                         "7am a 4pm"	,
-                        "7am a 2pm"	,
+                        "7am a 12pm"	,
                         "7am a 4pm",//sunday
                         "7am a 4pm"	,
                         "7am a 4pm"	,
@@ -290,14 +290,14 @@ class FileDataProcessorTest {
                         "6am a 3pm",//
                         "6am a 3pm",
                         "6am a 3pm",
-                        "6am a 1pm",//
+                        "6am a 11am",//
                         "DESC", // Sunday
                         "6am a 3pm",//
                         "6am a 3pm",
                         "6am a 3pm",
                         "6am a 3pm",//
                         "6am a 3pm",
-                        "6am a 1pm",//
+                        "6am a 11am",//
                         "DESC", // Sunday
                         "6am a 3pm"//
                 )
@@ -342,14 +342,14 @@ class FileDataProcessorTest {
                         "6am a 3pm",//
                         "6am a 3pm",
                         "6am a 3pm",
-                        "6am a 3pm",//
+                        "6am a 1pm",//
                         "DESC", // Sunday
                         "6am a 3pm",//
                         "6am a 3pm",
                         "6am a 3pm",
                         "DESC",//
                         "6am a 3pm",
-                        "6am a 1pm",//
+                        "6am a 11am",//
                         "2am a 3pm" // Sunday
                 )
         );

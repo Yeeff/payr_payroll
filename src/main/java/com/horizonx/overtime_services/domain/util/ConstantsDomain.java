@@ -12,7 +12,7 @@ public class ConstantsDomain {
     public static final Long STEP_IN_MINUTES = 30L;
 
     public static final Integer MAXIMUM_HOURS_PER_DAY = 8;
-    public static final Integer MAXIMUM_HOURS_PER_WEEK = 46;
+    public static final Integer MAXIMUM_HOURS_PER_WEEK = 44;
 
     public static final String SIIGO_FORMAT_NAME = "Subir novedades desde Excel.xlsx";
 
