@@ -262,7 +262,6 @@ public class FileDataProcessor {
         if(
                 !employee.getSurcharges().isEmpty()
                         || !employee.getOvertimes().isEmpty()
-                        || !employee.getOvertimeSurcharges().isEmpty()
                         || !employee.getAbsenteeismReasons().isEmpty()
         ) employees.add(employee);
         return employees;

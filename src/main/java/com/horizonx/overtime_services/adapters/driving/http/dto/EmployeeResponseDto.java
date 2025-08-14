@@ -2,7 +2,6 @@ package com.horizonx.overtime_services.adapters.driving.http.dto;
 
 import com.horizonx.overtime_services.domain.model.AbsenteeismReason;
 import com.horizonx.overtime_services.domain.model.Overtime;
-import com.horizonx.overtime_services.domain.model.OvertimeSurcharge;
 import com.horizonx.overtime_services.domain.model.Surcharge;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +20,6 @@ public class EmployeeResponseDto {
     private String name;
     private List<Surcharge> surcharges;
     private List<Overtime> overtimes;
-    private List<OvertimeSurcharge> overtimeSurcharges;
     private List<AbsenteeismReason> absenteeismReasons;
 
     private Double totalOvertimeSurchargeHoursNightHoliday;

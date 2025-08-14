@@ -22,10 +22,6 @@ public class ConstantsDomain {
         MILITARY // 24-hour format (e.g., "07:30", "13:45")
     }
 
-    public enum OvertimeSurchargeTypeEnum {
-        HOLIDAY, NIGHT_HOLIDAY
-    }
-
     public enum OvertimeTypeEnum {
         DAY, NIGHT, HOLIDAY, NIGHT_HOLIDAY
     }

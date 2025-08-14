@@ -12,13 +12,11 @@ public class Employee {
     private String name;
     private List<Surcharge> surcharges;
     private List<Overtime> overtimes;
-    private List<OvertimeSurcharge> overtimeSurcharges;
     private List<AbsenteeismReason> absenteeismReasons;
 
     public Employee() {
         this.surcharges = new ArrayList<>();
         this.overtimes = new ArrayList<>();
-        this.overtimeSurcharges = new ArrayList<>();
         this.absenteeismReasons =new ArrayList<>();
     }
 
@@ -30,9 +28,6 @@ public class Employee {
         overtimes.add(overtime);
     }
 
-    public void addNewOverTimeSurcharge(OvertimeSurcharge overtimeSurcharge){
-        overtimeSurcharges.add(overtimeSurcharge);
-    }
     public void addNewAbsenteeismReason(AbsenteeismReason absenteeismReason) {
         absenteeismReasons.add(absenteeismReason);
     }
@@ -120,10 +115,6 @@ public class Employee {
         return overtimes;
     }
 
-    public List<OvertimeSurcharge> getOvertimeSurcharges() {
-        return overtimeSurcharges;
-    }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -140,7 +131,4 @@ public class Employee {
         this.overtimes = overtimes;
     }
 
-    public void setOvertimeSurcharges(List<OvertimeSurcharge> overtimeSurcharges) {
-        this.overtimeSurcharges = overtimeSurcharges;
-    }
 }
