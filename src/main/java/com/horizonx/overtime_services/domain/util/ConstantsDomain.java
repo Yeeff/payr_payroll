@@ -77,5 +77,38 @@ public class ConstantsDomain {
     public static final String FILE_NOT_FOUND_MESSAGE_ERROR = "File not found: '%s'";
     public static final String FILE_SERVICE_MESSAGE_ERROR = "File Service error:: '%s'";
 
+    public static final Set<String> VALID_CODES = Set.of(
+            AbsenceReasonsEnum.INC_ARL.toString(),
+            AbsenceReasonsEnum.INC.toString(),
+            AbsenceReasonsEnum.INC_SIN_SOPR.toString(),
+            AbsenceReasonsEnum.PNR.toString(),
+            AbsenceReasonsEnum.LR.toString(),
+            AbsenceReasonsEnum.AUS.toString(),
+            AbsenceReasonsEnum.EPS.toString(),
+            AbsenceReasonsEnum.RET.toString(),
+            AbsenceReasonsEnum.DESC.toString(),
+            AbsenceReasonsEnum.INC_FONDO.toString(),
+            AbsenceReasonsEnum.VAC.toString(),
+            AbsenceReasonsEnum.LM.toString(),
+            AbsenceReasonsEnum.X.toString()
+    );
+
+    public static final String INVALID_VALUE_MESSAGE_ERROR = "'%s' no, es un valor válido.";
+    public static final Integer FIRST_DAY_OF_SECOND_FORTNIGHT = 16;
+    public static final String EMPTY_NAME_VALUE_MESSAGE_ERROR = "El campo nombre no puede estar vacio.";
+    public static final String DOCUMENT_ID_VALUE_MESSAGE_ERROR = "El valor '%s' no es válido como numero de identificacion del empleado.";
+    public static final Integer FIRST_DAY_OF_FIRST_FORTNIGHT = 1;
+    public static final String LAST_VALUE_FIRST_FORTNIGHT_MESSAGE_ERROR = "El ultimo dia la quincena debe ser 15 pero después de esa columana se encontro el valor: %s";
+
+    public static final Integer FIRST_DAY_OF_MONTH = 1;
+    public static final String LAST_VALUE_SECOND_FORTNIGHT_MESSAGE_ERROR = "El ultimo dia de %s es %s pero después de esa columana se encontro el valor: %s";
+    public static final Integer LAST_DAY_OF_FIRST_FORTNIGHT = 15;
+    public static final String NOT_CORRESPONDING_QUANTITY_OF_DAYS_FOR_FORTNIGHT_MESSAGE_ERROR = "La fila %s no contiene la candidad de dias correspondiente.";
+
+
+
+
+
+
 
 }

@@ -7,6 +7,7 @@ import com.horizonx.overtime_services.adapters.driven.jpa.mysql.adapter.PayrollP
 import com.horizonx.overtime_services.domain.api.IPayrollServicesPort;
 import com.horizonx.overtime_services.domain.api.usecase.PayrollServices;
 import com.horizonx.overtime_services.domain.service.file.FileDataProcessor;
+import com.horizonx.overtime_services.domain.service.file.FileDataValidator;
 import com.horizonx.overtime_services.domain.spi.IFileServicePort;
 import com.horizonx.overtime_services.domain.spi.IPayrollPersistentPort;
 import lombok.AllArgsConstructor;
@@ -26,13 +27,18 @@ public class BeanConfiguration {
     }
 
     @Bean
+    public FileDataValidator getFileDataValidator(){
+        return  new FileDataValidator();
+    }
+
+    @Bean
     public IFileServicePort getFileServicesPort(){
         return new FileClientServices(fileServicesClient, fileMapper);
     }
 
     @Bean
     public IPayrollServicesPort getPayrollServicePort(){
-        return new PayrollServices(getFileDataProcessor(), getFileServicesPort());
+        return new PayrollServices(getFileDataProcessor(), getFileServicesPort(), getFileDataValidator());
     }
 
     @Bean
