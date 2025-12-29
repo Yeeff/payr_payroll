@@ -24,7 +24,7 @@ class SurchargeCalculatorTest {
         LocalDateTime start = LocalDateTime.parse(startStr);
         LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
+        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY, false);
 
         Surcharge nightSurcharge = result.stream()
                 .filter(s -> s.getSurchargeTypeEnum() == SurchargeTypeEnum.NIGHT)
@@ -47,7 +47,7 @@ class SurchargeCalculatorTest {
         LocalDateTime start = LocalDateTime.parse(startStr);
         LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
+        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY, false);
 
         Surcharge holidaySurcharge = result.stream()
                 .filter(s -> s.getSurchargeTypeEnum() == SurchargeTypeEnum.HOLIDAY)
@@ -69,7 +69,7 @@ class SurchargeCalculatorTest {
         LocalDateTime start = LocalDateTime.parse(startStr);
         LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
+        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY, false);
 
         Surcharge nightHolidaySurcharge = result.stream()
                 .filter(s -> s.getSurchargeTypeEnum() == SurchargeTypeEnum.NIGHT_HOLIDAY)
@@ -91,7 +91,7 @@ class SurchargeCalculatorTest {
         LocalDateTime start = LocalDateTime.parse(startStr);
         LocalDateTime end = LocalDateTime.parse(endStr);
 
-        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY);
+        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end, ConstantsDomain.MAXIMUM_HOURS_PER_DAY, false);
 
         Surcharge nightSurcharge = result.stream()
                 .filter(s -> s.getSurchargeTypeEnum() == SurchargeTypeEnum.NIGHT)
