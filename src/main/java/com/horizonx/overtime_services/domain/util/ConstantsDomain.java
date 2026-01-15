@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class ConstantsDomain {
 
-    public static final LocalTime NIGHT_START = LocalTime.of(21, 0);
+    public static final LocalTime NIGHT_START = LocalTime.of(19, 0);
     public static final LocalTime NIGHT_END = LocalTime.of(6, 0);
 
     public static final Long STEP_IN_MINUTES = 30L;
