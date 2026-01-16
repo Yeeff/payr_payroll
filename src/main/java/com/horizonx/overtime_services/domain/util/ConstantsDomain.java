@@ -64,7 +64,8 @@ public class ConstantsDomain {
             LocalDate.of(2025, 11, 3),  // Todos los santos
             LocalDate.of(2025, 11, 17),  // Independencia de Cartagena
             LocalDate.of(2025, 12, 8),  // Dia de la inmaculada concepcion
-            LocalDate.of(2025, 12, 25)  // Dia de navidad
+            LocalDate.of(2025, 12, 25),  // Dia de navidad
+            LocalDate.of(2026, 1, 1)  // Dia de navidad
 
     );
 
