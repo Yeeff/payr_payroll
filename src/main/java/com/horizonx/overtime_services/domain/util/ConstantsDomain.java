@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class ConstantsDomain {
 
-    public static final LocalTime NIGHT_START = LocalTime.of(19, 0);
+    public static final LocalTime NIGHT_START = LocalTime.of(17, 0);
     public static final LocalTime NIGHT_END = LocalTime.of(6, 0);
 
     public static final Long STEP_IN_MINUTES = 30L;
@@ -65,7 +65,8 @@ public class ConstantsDomain {
             LocalDate.of(2025, 11, 17),  // Independencia de Cartagena
             LocalDate.of(2025, 12, 8),  // Dia de la inmaculada concepcion
             LocalDate.of(2025, 12, 25),  // Dia de navidad
-            LocalDate.of(2026, 1, 1)  // Dia de navidad
+            LocalDate.of(2026, 1, 1),  // Dia de navidad
+            LocalDate.of(2026, 1, 12)
 
     );
 
