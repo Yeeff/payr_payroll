@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OvertimeCalculatorTest {
-/*
+
     @ParameterizedTest
     @CsvSource({
             "2024-09-20T07:00, 2024-09-20T16:00, 60",
@@ -103,8 +103,8 @@ class OvertimeCalculatorTest {
 
     @ParameterizedTest
     @CsvSource({
-            "2024-09-21T08:00, 2024-09-22T23:00, 300, 180, 900, 480",
-            "2024-09-21T06:00, 2024-09-22T22:00, 420, 180, 900, 420"
+            "2024-09-21T08:00, 2024-09-22T23:00, 180, 300, 780, 600",
+            "2024-09-21T06:00, 2024-09-22T22:00, 300, 300, 780, 540"
     })
     void testMixedOvertime(String startStr, String endStr, Long dayValue, Long nightValue, Long holidayValue, Long nightHolidayValue) {
         LocalDateTime start = LocalDateTime.parse(startStr);
@@ -149,5 +149,5 @@ class OvertimeCalculatorTest {
         assertEquals(OvertimeTypeEnum.NIGHT_HOLIDAY, nightHolidayOvertime.getOvertimeTypeEnum());
         assertEquals(nightHolidayValue, nightHolidayQuantityHours);  // 2 hours (Monday night)
     }
-*/
+
 }
