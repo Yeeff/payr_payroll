@@ -380,57 +380,6 @@ class FileDataProcessorTest {
         assertEquals(4, employee.getTotalOvertimeSurchargeHoursNightHoliday());
 
     }
-/*
-    @Test
-    void testExtractEmployeeDataSpecificCase() {
-        List<List<String>> listOfListData = Arrays.asList(
-                Arrays.asList("CEDULA", "NOMBRE", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"),
-                Arrays.asList(
-                        "12345678",
-                        "JUAN PEREZ",
-                        "DESC", // Holady
-                        "7am a 4pm",
-                        "7am a 4pm",
-                        "DESC",// Sunday
-                        "7am a 4pm",
-                        "12pm A 8pm",
-                        "7am a 4pm",//
-                        "12pm A 8pm", //
-                        "7am a 4pm",//
-                        "7am a 4pm",
-                        "7am a 7pm",// Sunday
-                        "7am a 7pm",//Holiday
-                        "7am a 4pm",
-                        "7am a 4pm",//
-                        "7am a 4pm" //
-                )
-        );
-        int year = 2026;
-        int month = 1;
-        int initDay = 1;
 
-        // Act
-        List<Employee> result = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay, ConstantsDomain.TimeFormat.REGULAR);
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        Employee employee = result.get(0);
-
-        assertEquals("12345678", employee.getId().toString());
-        assertEquals("JUAN PEREZ", employee.getName());
-
-        assertEquals(0, employee.getTotalSurchargeHoursNight());
-        assertEquals(0, employee.getTotalSurchargeHoursNightHoliday());
-        assertEquals(0, employee.getTotalSurchargeHoursHoliday());
-
-        assertEquals(2, employee.getTotalOvertimeHoursDay());
-        assertEquals(0, employee.getTotalOvertimeHoursNight());
-        assertEquals(8, employee.getTotalOvertimeHoursHoliday());
-        assertEquals(0, employee.getTotalOvertimeHoursNightHoliday());
-
-        assertEquals(16, employee.getTotalOvertimeSurchargeHoursHoliday());
-        assertEquals(0, employee.getTotalOvertimeSurchargeHoursNightHoliday());
-
-    }
 */
 }
