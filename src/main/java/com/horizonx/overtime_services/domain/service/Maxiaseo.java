@@ -28,7 +28,8 @@ public class Maxiaseo {
             return timeRange;
         }
 
-        timeRange.setEndTime(timeRange.getEndTime().minusHours(1));
+        //timeRange.setEndTime(timeRange.getEndTime().minusHours(1));
+        timeRange.setStartTime(timeRange.getStartTime().plusHours(1));
 
         return timeRange;
     }

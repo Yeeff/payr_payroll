@@ -11,7 +11,7 @@ public class ConstantsDomain {
 
     public static final Long STEP_IN_MINUTES = 30L;
 
-    public static final Integer MAXIMUM_HOURS_PER_DAY = 8;
+    public static final Integer MAXIMUM_HOURS_PER_DAY = 10;
     public static final Integer MAXIMUM_HOURS_PER_WEEK = 44;
 
     public static final String SIIGO_FORMAT_NAME = "Subir novedades desde Excel.xlsx";
@@ -67,7 +67,6 @@ public class ConstantsDomain {
             LocalDate.of(2025, 12, 25),  // Dia de navidad
             LocalDate.of(2026, 1, 1),  // Dia de navidad
             LocalDate.of(2026, 1, 12)
-
     );
 
     public static final Integer FIRST_ROW_WITH_VALID_DATA_INDEX = 1;
