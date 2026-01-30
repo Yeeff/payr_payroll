@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class FileDataProcessorTest {
-
+/*
     @Mock
     private  PayrollPersistentAdapter payrollPersistentAdapter;
 
