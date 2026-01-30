@@ -101,6 +101,8 @@ public class FileDataProcessor {
 
         if (hoursWorkedPerWeek >= MAXIMUM_HOURS_PER_WEEK ) isMaximumHoursWorkedPerWeekReached = true;
 
+        isMaximumHoursWorkedPerWeekReached = true; //Pending adjustment!!!
+
         Integer legalLimitOfHours = defineNumOfLegalLimitOfHours(startTime);
 
         for (Surcharge surcharge : SurchargeCalculator.getSurchargeList(startTime, endTime, legalLimitOfHours, isMaximumHoursWorkedPerWeekReached)) {
