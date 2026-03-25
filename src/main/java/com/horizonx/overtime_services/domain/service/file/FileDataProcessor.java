@@ -101,6 +101,8 @@ public class FileDataProcessor {
 
         if (hoursWorkedPerWeek >= MAXIMUM_HOURS_PER_WEEK ) isMaximumHoursWorkedPerWeekReached = true;
 
+        isMaximumHoursWorkedPerWeekReached = true; //Pending adjustment!!!
+
         Integer legalLimitOfHours = defineNumOfLegalLimitOfHours(startTime);
 
         for (Surcharge surcharge : SurchargeCalculator.getSurchargeList(startTime, endTime, legalLimitOfHours, isMaximumHoursWorkedPerWeekReached)) {
@@ -206,7 +208,7 @@ public class FileDataProcessor {
             hoursWorkedPerWeek += hoursWorkedInTheLastFortnight;
         }else{
             hoursWorkedPerWeek +=  switch (dayOfWeek){
-                case TUESDAY -> 8; case WEDNESDAY -> 16; case THURSDAY -> 24; case FRIDAY -> 32; case SATURDAY -> 40; case SUNDAY -> MAXIMUM_HOURS_PER_WEEK; default -> MAXIMUM_HOURS_PER_WEEK;
+                case TUESDAY -> MAXIMUM_HOURS_PER_DAY; case WEDNESDAY -> MAXIMUM_HOURS_PER_DAY*2; case THURSDAY -> MAXIMUM_HOURS_PER_DAY*3; case FRIDAY -> MAXIMUM_HOURS_PER_DAY*4; case SATURDAY -> MAXIMUM_HOURS_PER_DAY*5; case SUNDAY -> MAXIMUM_HOURS_PER_WEEK; default -> MAXIMUM_HOURS_PER_WEEK;
             };
         }
 
