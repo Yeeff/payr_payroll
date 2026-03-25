@@ -66,7 +66,15 @@ public class ConstantsDomain {
             LocalDate.of(2025, 12, 8),  // Dia de la inmaculada concepcion
             LocalDate.of(2025, 12, 25),  // Dia de navidad
             LocalDate.of(2026, 1, 1),  // Dia de navidad
-            LocalDate.of(2026, 1, 12)
+            LocalDate.of(2026, 1, 12),
+            LocalDate.of(2026, 3, 23),
+            LocalDate.of(2026, 4, 2),
+            LocalDate.of(2026, 4, 3),
+            LocalDate.of(2026, 5, 1),
+            LocalDate.of(2026, 5, 18),
+            LocalDate.of(2026, 6, 8),
+            LocalDate.of(2026, 6, 15),
+            LocalDate.of(2026, 6, 29)
     );
 
     public static final Integer FIRST_ROW_WITH_VALID_DATA_INDEX = 1;
