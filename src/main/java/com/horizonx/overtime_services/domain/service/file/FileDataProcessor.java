@@ -130,7 +130,7 @@ public class FileDataProcessor {
             legalLimitOfHours= MAXIMUM_HOURS_PER_DAY;
 
         if( startTime.getDayOfWeek() == DayOfWeek.SUNDAY)
-            legalLimitOfHours = MAXIMUM_HOURS_PER_DAY;
+            legalLimitOfHours = 8;
 
         return  legalLimitOfHours;
     }
