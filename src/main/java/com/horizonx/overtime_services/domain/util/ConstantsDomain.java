@@ -83,7 +83,7 @@ public class ConstantsDomain {
             LocalDate.of(2026, 11, 2),
             LocalDate.of(2026, 11, 16),
             LocalDate.of(2026, 12, 8),
-            LocalDate.of(2026, 12, 25),
+            LocalDate.of(2026, 12, 25)
     );
 
     public static final Integer FIRST_ROW_WITH_VALID_DATA_INDEX = 1;
